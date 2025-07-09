@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation - Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .wedding-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .couple-names {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #8B4513;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .welcome-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .password-form {
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Playfair Display', serif;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #8B4513, #D4AF37);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #f44336;
+            font-weight: 600;
+            margin-top: 1rem;
+            padding: 10px;
+            background: rgba(244, 67, 54, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .hint-text {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .footer-text {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .couple-names {
+                font-size: 2rem;
+            }
+            
+            .welcome-text {
+                font-size: 1rem;
+            }
+        }
+
+        .loading {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #D4AF37;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="wedding-icon">💒</div>
+        <h1 class="couple-names">Alex & Cha</h1>
+        <p class="welcome-text">
+            Welcome to our wedding invitation!<br>
+            Please enter the password to access our special day details.
+        </p>
+        
+        <form class="password-form" onsubmit="checkPassword(event)">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    class="password-input" 
+                    placeholder="Enter the password" 
+                    required
+                    autocomplete="off"
+                >
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                Enter Wedding Site
+            </button>
+        </form>
+        
+        <div class="error-message" id="errorMessage">
+            Incorrect password. Please try again.
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Accessing wedding site...</p>
+        </div>
+        
+        <p class="hint-text">
+            💡 Hint: Check your wedding invitation for the password
+        </p>
+        
+        <div class="footer-text">
+            <p>With love, Alex & Cha</p>
+        </div>
+    </div>
+
+    <script>
+        // Get password from localStorage or use default
+        function getCorrectPassword() {
+            return localStorage.getItem('weddingPassword') || "alexcha2024";
+        }
+        
+        function checkPassword(event) {
+            event.preventDefault();
+            
+            const passwordInput = document.getElementById('password');
+            const password = passwordInput.value.trim();
+            
+            // Check individual invitations only
+            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            const invitation = invitations.find(inv => inv.password === password);
+            
+            if (invitation) {
+                // Check if invitation has already been used
+                if (invitation.used) {
+                    alert('This invitation has already been used. Please contact the couple if you need assistance.');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                    return;
+                }
+                
+                // Grant access
+                sessionStorage.setItem('weddingAccess', 'granted');
+                sessionStorage.setItem('invitedGuest', invitation.guestName);
+                sessionStorage.setItem('canBringCompanion', invitation.canBringCompanion ? 'true' : 'false');
+                sessionStorage.setItem('invitationPassword', invitation.password);
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Invalid password
+            alert('Invalid invitation password. Please check your invitation or contact the couple.');
+            passwordInput.value = '';
+            passwordInput.focus();
+
+            // Shake animation
+            passwordInput.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => {
+                passwordInput.style.animation = '';
+            }, 500);
+        }
+        
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Check if already accessed
+        if (sessionStorage.getItem('weddingAccess') === 'granted') {
+            window.location.href = 'index.html';
+        }
+        
+        // Focus on password input when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('password').focus();
+        });
+        
+        // Allow Enter key to submit
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword(e);
+            }
+        });
+    </script>
+</body>
+</html> 

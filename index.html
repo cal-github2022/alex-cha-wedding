@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex & Cha's Wedding</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        // Check for password access
+        if (sessionStorage.getItem('weddingAccess') !== 'granted') {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Music Player -->
+    <div class="music-player">
+        <div class="music-controls">
+            <button id="playPauseBtn" class="music-btn">
+                <span id="playIcon">▶</span>
+            </button>
+            <div class="music-info">
+                <span class="song-title">Romantic Piano Melodies</span>
+                <div class="volume-control">
+                    <span>🔊</span>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="25">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Slideshow -->
+    <div class="background-slideshow">
+        <div class="slide active"></div>
+        <div class="slide"></div>
+        <div class="slide"></div>
+    </div>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="couple-names">Alex & Cha</h1>
+            <p class="wedding-date">Are getting married</p>
+            <p class="wedding-location">Saturday, December 14th, 2024</p>
+            <p class="wedding-location">The Grand Ballroom • New York City</p>
+        </header>
+
+        <div class="countdown-section">
+            <h2>Countdown to Our Special Day</h2>
+            <div class="countdown-timer">
+                <div class="countdown-item">
+                    <span id="days" class="countdown-number">00</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-item">
+                    <span id="hours" class="countdown-number">00</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-item">
+                    <span id="minutes" class="countdown-number">00</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span id="seconds" class="countdown-number">00</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="rsvp-section">
+            <h2>Will you join us?</h2>
+            <p class="rsvp-text">Please let us know if you can attend our special day</p>
+            <div class="rsvp-buttons">
+                <button class="rsvp-btn attending" onclick="showAttendeeForm('attending')">
+                    <span class="btn-icon">💒</span>
+                    <span class="btn-text">I'll be there!</span>
+                </button>
+                <button class="rsvp-btn not-attending" onclick="showAttendeeForm('not-attending')">
+                    <span class="btn-icon">💔</span>
+                    <span class="btn-text">I can't make it</span>
+                </button>
+            </div>
+            <div id="rsvp-message" class="rsvp-message"></div>
+        </div>
+
+        <!-- Attendee Form Modal -->
+        <div id="attendeeModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2 id="modalTitle">Please provide your details</h2>
+                <form id="attendeeForm" onsubmit="submitRSVP(event)">
+                    <div class="form-group" id="nameGroup">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group" id="emailGroup">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group" id="phoneGroup">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group" id="cityGroup">
+                        <label for="city">City/Address *</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    
+                    <div class="form-group" id="relationshipGroup">
+                        <label for="relationship">Your relationship to Alex & Cha *</label>
+                        <select id="relationship" name="relationship" required>
+                            <option value="">Select your relationship</option>
+                            <option value="Family - Alex's side">Family - Alex's side</option>
+                            <option value="Family - Cha's side">Family - Cha's side</option>
+                            <option value="Friend of Alex">Friend of Alex</option>
+                            <option value="Friend of Cha">Friend of Cha</option>
+                            <option value="Friend of both">Friend of both</option>
+                            <option value="Ninong or Ninang">Ninong or Ninang</option>
+                            <option value="College friend">College friend</option>
+                            <option value="Work colleague">Work colleague</option>
+                            <option value="Neighbor">Neighbor</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="companionNameGroup" style="display: none;">
+                        <label for="companionName">Companion's Full Name</label>
+                        <input type="text" id="companionName" name="companionName">
+                    </div>
+                    
+                    <div class="form-group" id="dietaryGroup">
+                        <label for="dietary">Dietary Restrictions (if any)</label>
+                        <textarea id="dietary" name="dietary" rows="3" placeholder="e.g., Vegetarian, Gluten-free, Allergies..."></textarea>
+                    </div>
+                    
+                    <div class="form-group" id="messageGroup">
+                        <label for="message">Message to the couple (optional)</label>
+                        <textarea id="message" name="message" rows="3" placeholder="Share your excitement or any special requests..."></textarea>
+                    </div>
+
+                    <div class="form-group" id="reasonGroup" style="display:none;">
+                        <label for="reason">Reason for not coming *</label>
+                        <textarea id="reason" name="reason" rows="3" required placeholder="Please let us know why you can't make it..."></textarea>
+                    </div>
+                    
+                    <input type="hidden" id="rsvpType" name="rsvpType">
+                    
+                    <div class="form-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn-primary" id="submitRSVPBtn">Submit RSVP</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="details-section">
+            <h2>Wedding Details</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <h3>Ceremony</h3>
+                    <p>4:00 PM - 5:00 PM</p>
+                    <p>The Grand Ballroom</p>
+                </div>
+                <div class="detail-item">
+                    <h3>Reception</h3>
+                    <p>6:00 PM - 11:00 PM</p>
+                    <p>Dinner & Dancing</p>
+                </div>
+                <div class="detail-item">
+                    <h3>Dress Code</h3>
+                    <p>Formal Attire</p>
+                    <p>Black Tie Optional</p>
+                </div>
+                <div class="detail-item">
+                    <h3>Contact</h3>
+                    <p>RSVP by November 30th</p>
+                    <p>alex.cha@email.com</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>We can't wait to celebrate with you!</p>
+            <p>With love, Alex & Cha</p>
+        </footer>
+    </div>
+
+    <!-- Audio Element with Romantic Piano Music -->
+    <audio id="backgroundMusic" loop preload="auto">
+        <!-- Beautiful romantic piano music sources -->
+        <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+        <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
+        <source src="https://www.bensound.com/bensound-music/bensound-memories.mp3" type="audio/mpeg">
+        <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Creative_Commons/Kevin_MacLeod/Impact/Kevin_MacLeod_-_Married_Life.mp3" type="audio/mpeg">
+        <source src="https://archive.org/download/PianoSolo-Emotional/Piano%20Solo%20-%20Emotional.mp3" type="audio/mpeg">
+        <source src="https://ia800304.us.archive.org/35/items/PianoMusic-RomanticClassical/Piano%20Music%20-%20Romantic%20Classical.mp3" type="audio/mpeg">
+        <!-- Additional reliable piano music sources -->
+        <source src="https://www.bensound.com/bensound-music/bensound-pianomoment.mp3" type="audio/mpeg">
+        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+        
+        Your browser does not support the audio element.
+    </audio>
+
+    <script src="script.js"></script>
+
+    <script>
+    // --- RSVP Modal Logic (robust, runs after DOM loaded) ---
+    function updateRSVPFormFields() {
+        var rsvpType = document.getElementById('rsvpType').value;
+        var showAll = rsvpType === 'attending';
+        
+        console.log('updateRSVPFormFields called with rsvpType:', rsvpType);
+
+        // ALWAYS show nameGroup and require name - CRITICAL FIX
+        var nameGroup = document.getElementById('nameGroup');
+        var nameField = document.getElementById('name');
+        
+        nameGroup.style.display = 'block';
+        nameGroup.style.visibility = 'visible';
+        nameField.required = true;
+        nameField.style.display = 'block';
+        
+        console.log('Name field visibility:', nameGroup.style.display, 'Required:', nameField.required);
+
+        // Show/hide all other fields
+        document.getElementById('emailGroup').style.display = showAll ? 'block' : 'none';
+        document.getElementById('email').required = showAll;
+        document.getElementById('phoneGroup').style.display = showAll ? 'block' : 'none';
+        document.getElementById('cityGroup').style.display = showAll ? 'block' : 'none';
+        document.getElementById('city').required = showAll;
+        document.getElementById('relationshipGroup').style.display = showAll ? 'block' : 'none';
+        document.getElementById('relationship').required = showAll;
+        document.getElementById('companionNameGroup').style.display = (showAll && sessionStorage.getItem('canBringCompanion') === 'true') ? 'block' : 'none';
+        document.getElementById('dietaryGroup').style.display = showAll ? 'block' : 'none';
+        document.getElementById('messageGroup').style.display = showAll ? 'block' : 'none';
+
+        // Reason for not coming
+        document.getElementById('reasonGroup').style.display = rsvpType === 'not-attending' ? 'block' : 'none';
+        document.getElementById('reason').required = rsvpType === 'not-attending';
+
+        // Button color
+        var submitBtn = document.getElementById('submitRSVPBtn');
+        if (rsvpType === 'not-attending') {
+            submitBtn.classList.add('btn-danger');
+            submitBtn.textContent = 'Submit - Not Coming';
+        } else {
+            submitBtn.classList.remove('btn-danger');
+            submitBtn.textContent = 'Submit RSVP';
+        }
+        
+        console.log('Form fields updated. Name field should be visible for both attending and not-attending.');
+    }
+
+    function showAttendeeForm(type) {
+        console.log('showAttendeeForm called with type:', type);
+        var form = document.getElementById('attendeeForm');
+        form.reset();
+        document.getElementById('rsvpType').value = type;
+        
+        // Immediately update form fields
+        updateRSVPFormFields();
+        
+        // Show the modal
+        document.getElementById('attendeeModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        
+        // Double-check after a brief delay
+        setTimeout(() => {
+            updateRSVPFormFields();
+            console.log('Form fields re-updated after delay');
+        }, 100);
+    }
+
+    function closeModal() {
+        document.getElementById('attendeeModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    // Ensure correct fields on load and after form reset
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing form fields');
+        updateRSVPFormFields();
+    });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Alex & Cha's Wedding</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border: 2px solid white;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .admin-login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .admin-login-modal {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .admin-login-modal h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .admin-login-modal input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .admin-login-modal button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-login-modal button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .attendees-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .attendees-table th,
+        .attendees-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .attendees-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .attendees-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+        }
+
+        .password-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .password-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .export-section {
+            margin-top: 20px;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links a {
+                display: block;
+                margin: 10px 0;
+            }
+            
+            .attendees-table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Login Overlay -->
+    <div id="adminLoginOverlay" class="admin-login-overlay">
+        <div class="admin-login-modal">
+            <h2>Admin Access Required</h2>
+            <p>Please enter the admin password to access the panel:</p>
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+            <br>
+            <button onclick="checkAdminPassword()">Login</button>
+            <button onclick="window.open('index.html', '_blank')">Go to Wedding Site</button>
+        </div>
+    </div>
+
+    <!-- Main Admin Panel (hidden until login) -->
+    <div id="adminPanel" class="hidden">
+        <div class="container">
+            <div class="header">
+                <h1>Admin Panel</h1>
+                <p>Alex & Cha's Wedding Management</p>
+                <div class="nav-links">
+                    <a href="index.html" target="_blank">Wedding Site</a>
+                    <a href="#" onclick="refreshData()">🔄 Refresh Data</a>
+                    <a href="#" onclick="toggleAutoRefresh()" id="autoRefreshToggle">⏰ Auto-Refresh: ON</a>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalAttendees">0</div>
+                        <div class="stat-label">Total RSVPs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="confirmedAttendees">0</div>
+                        <div class="stat-label">Attending</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="notComingAttendees">0</div>
+                        <div class="stat-label">Not Coming</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="withCompanions">0</div>
+                        <div class="stat-label">With Companions</div>
+                    </div>
+                </div>
+
+                <!-- Invitation Management -->
+                <div class="section">
+                    <h2>🎫 Invitation Management</h2>
+                    <div style="padding: 20px; background: #e8f5e8; border-radius: 10px; border: 1px solid #4caf50;">
+                        <h3>Individual Invitation System</h3>
+                        <p><strong>Generate unique passwords for specific guests:</strong></p>
+                        <div style="display: flex; gap: 10px; align-items: center; margin: 15px 0;">
+                            <input type="text" id="guestName" placeholder="Guest name" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                            <label style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                                <input type="checkbox" id="canBringCompanion" style="margin:0;"> Can bring companion
+                            </label>
+                            <button class="btn" onclick="generateInvitation()">Generate Invitation</button>
+                        </div>
+                        <p style="font-size: 12px; color: #666;">This creates a unique password that only this guest can use to access the wedding website.</p>
+                        <p style="font-size: 12px; color: #4caf50; margin-top: 10px;"><strong>✓ Secure System:</strong> Only admin-generated invitations are accepted.</p>
+                    </div>
+                </div>
+
+                <!-- Active Invitations -->
+                <div class="section">
+                    <h2>📋 Guest Management</h2>
+                    <p style="color: #666; margin-bottom: 20px;">Click on any guest name to view their RSVP details and manage their response.</p>
+                    
+                    <!-- Debug Section -->
+                    <div style="background: #f0f8ff; border: 1px solid #add8e6; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">🔍 Debug Info</h4>
+                        <button class="btn" onclick="showDebugInfo()" style="background: #4169e1;">Show Raw Data</button>
+                        <div id="debugOutput" style="margin-top: 10px; display: none; background: white; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;"></div>
+                    </div>
+                    
+                    <div class="export-section">
+                        <h3>Export Data</h3>
+                        <div class="export-buttons">
+                            <button class="btn" onclick="exportToCSV()">Export to CSV</button>
+                            <button class="btn" onclick="exportToJSON()">Export to JSON</button>
+                            <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+                        </div>
+                    </div>
+                    
+                    <div id="invitationsList">
+                        <p>Loading invitations...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh timer
+        let autoRefreshTimer = null;
+        
+        // Admin password check
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            const validPassword = 'admin69';
+            
+            if (password === validPassword) {
+                document.getElementById('adminLoginOverlay').style.display = 'none';
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadAdminData();
+                startAutoRefresh();
+            } else {
+                alert('Invalid admin password. Please try again.');
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        // Start auto-refresh timer
+        function startAutoRefresh() {
+            // Clear any existing timer
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+            }
+            
+            // Set up auto-refresh every 1 minute (60000ms)
+            autoRefreshTimer = setInterval(() => {
+                console.log('Auto-refreshing admin data...');
+                loadAdminData();
+            }, 60000); // 1 minute
+        }
+
+        // Stop auto-refresh timer
+        function stopAutoRefresh() {
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+                autoRefreshTimer = null;
+            }
+        }
+
+        // Load admin data
+        function loadAdminData() {
+            loadInvitationsData();
+            updateStatistics();
+            updateLastRefreshTime();
+        }
+
+        // Enhanced load attendees data with better error handling
+        function loadAttendeesData() {
+            try {
+                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+                const attendeesList = document.getElementById('attendeesList');
+                
+                if (attendees.length === 0) {
+                    attendeesList.innerHTML = '<p>No RSVPs found.</p>';
+                    return;
+                }
+
+                let tableHTML = `
+                    <table class="attendees-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>Relationship</th>
+                                <th>Companion</th>
+                                <th>RSVP Status</th>
+                                <th>Details</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                attendees.forEach((attendee, index) => {
+                    const statusColor = attendee.rsvpType === 'attending' ? '#4caf50' : '#f44336';
+                    const statusText = attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming';
+                    const details = attendee.rsvpType === 'attending' ? 
+                        (attendee.dietary || 'No dietary restrictions') : 
+                        (attendee.reason || 'No reason provided');
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>${attendee.name}</td>
+                            <td>${attendee.city || 'Not specified'}</td>
+                            <td>${attendee.relationship || 'Not specified'}</td>
+                            <td>${attendee.companionName || 'None'}</td>
+                            <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
+                            <td>${details}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteAttendee(${index})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += '</tbody></table>';
+                attendeesList.innerHTML = tableHTML;
+                
+                console.log(`Loaded ${attendees.length} attendees`);
+            } catch (error) {
+                console.error('Error loading attendees data:', error);
+                document.getElementById('attendeesList').innerHTML = '<p>Error loading data. Please refresh.</p>';
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+            
+            document.getElementById('totalAttendees').textContent = attendees.length;
+            document.getElementById('confirmedAttendees').textContent = attendees.filter(a => a.rsvpType === 'attending').length;
+            document.getElementById('notComingAttendees').textContent = attendees.filter(a => a.rsvpType === 'not-attending').length;
+            document.getElementById('withCompanions').textContent = attendees.filter(a => a.companionName && a.companionName.trim() !== '').length;
+        }
+
+        // Delete attendee
+        function deleteAttendee(index) {
+            if (confirm('Are you sure you want to delete this attendee?')) {
+                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+                attendees.splice(index, 1);
+                localStorage.setItem('weddingAttendees', JSON.stringify(attendees));
+                loadAttendeesData();
+                updateStatistics();
+            }
+        }
+
+        // Generate unique invitation password
+        function generateInvitation() {
+            const guestName = document.getElementById('guestName').value.trim();
+            const canBringCompanion = document.getElementById('canBringCompanion').checked;
+            
+            if (!guestName) {
+                alert('Please enter a guest name.');
+                return;
+            }
+
+            // Generate unique password
+            const invitationCode = generateUniquePassword();
+            
+            // Get existing invitations
+            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            
+            // Check if guest already has invitation
+            const existingInvitation = invitations.find(inv => inv.guestName.toLowerCase() === guestName.toLowerCase());
+            if (existingInvitation) {
+                alert(`Invitation already exists for ${guestName}. Password: ${existingInvitation.password}`);
+                return;
+            }
+
+            // Add new invitation
+            const newInvitation = {
+                id: Date.now(),
+                guestName: guestName,
+                password: invitationCode,
+                created: new Date().toISOString(),
+                used: false,
+                canBringCompanion: canBringCompanion
+            };
+
+            invitations.push(newInvitation);
+            localStorage.setItem('invitations', JSON.stringify(invitations));
+
+            // Clear input
+            document.getElementById('guestName').value = '';
+            document.getElementById('canBringCompanion').checked = false; // Uncheck checkbox after generation
+
+            // Show success message with password
+            alert(`Invitation generated for ${guestName}!\n\nPassword: ${invitationCode}\n\nShare this password with ${guestName} to access the wedding website.`);
+
+            // Reload invitations list
+            loadInvitationsData();
+        }
+
+        // Generate unique password
+        function generateUniquePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let password = '';
+            for (let i = 0; i < 6; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
+        }
+
+        // Load invitations data
+        function loadInvitationsData() {
+            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+            const invitationsList = document.getElementById('invitationsList');
+            
+            if (invitations.length === 0) {
+                invitationsList.innerHTML = '<p>No invitations generated yet.</p>';
+                return;
+            }
+
+            let tableHTML = `
+                <table class="attendees-table">
+                    <thead>
+                        <tr>
+                            <th>Guest Name</th>
+                            <th>Invitation Password</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>RSVP Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            invitations.forEach((invitation, index) => {
+                const status = invitation.used ? 'Used' : 'Active';
+                const statusColor = invitation.used ? '#ff6b6b' : '#4caf50';
+                
+                // Find attendee data for this invitation BY INVITATION PASSWORD
+                const attendee = attendees.find(att => att.invitationPassword === invitation.password);
+                
+                let rsvpStatus = 'No Response';
+                let rsvpColor = '#999';
+                
+                if (attendee) {
+                    rsvpStatus = attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming';
+                    rsvpColor = attendee.rsvpType === 'attending' ? '#4caf50' : '#f44336';
+                } else if (invitation.used) {
+                    rsvpStatus = 'Submitted';
+                    rsvpColor = '#ff9800';
+                }
+                
+                tableHTML += `
+                    <tr onclick="showGuestDetails('${invitation.guestName}', ${index})" style="cursor: pointer;">
+                        <td>${invitation.guestName}</td>
+                        <td style="font-family: monospace; font-weight: bold;">${invitation.password}</td>
+                        <td>${new Date(invitation.created).toLocaleDateString()}</td>
+                        <td style="color: ${statusColor};">${status}</td>
+                        <td style="color: ${rsvpColor}; font-weight: bold;">${rsvpStatus}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="event.stopPropagation(); deleteInvitation(${index})">Delete</button>
+                            <button class="btn" onclick="event.stopPropagation(); copyPassword('${invitation.password}')">Copy Password</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            invitationsList.innerHTML = tableHTML;
+        }
+
+        // Show guest details modal
+        function showGuestDetails(guestName, invitationIndex) {
+            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            const invitation = invitations[invitationIndex];
+            
+            // Always match by invitation password
+            const attendee = attendees.find(att => att.invitationPassword === invitation.password);
+            
+            // Use the actual name from RSVP if available, otherwise use invitation guest name
+            const displayName = (attendee && attendee.name) ? attendee.name : guestName;
+            
+            let detailsHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <h2 style="color: #333; margin-bottom: 20px;">📋 Guest Details: ${displayName}</h2>
+            `;
+            
+            if (attendee) {
+                const statusColor = attendee.rsvpType === 'attending' ? '#4caf50' : '#f44336';
+                const statusText = attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming';
+                
+                detailsHTML += `
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: ${statusColor}; margin-bottom: 15px;">RSVP Status: ${statusText}</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <p><strong>Name:</strong> ${attendee.name || 'Not provided'}</p>
+                `;
+                
+                if (attendee.rsvpType === 'attending') {
+                    detailsHTML += `
+                        <p><strong>Email:</strong> ${attendee.email || 'Not provided'}</p>
+                        <p><strong>Phone:</strong> ${attendee.phone || 'Not provided'}</p>
+                        <p><strong>City:</strong> ${attendee.city || 'Not provided'}</p>
+                        <p><strong>Relationship:</strong> ${attendee.relationship || 'Not specified'}</p>
+                        <p><strong>Companion:</strong> ${attendee.companionName || 'None'}</p>
+                        <p><strong>Dietary Restrictions:</strong> ${attendee.dietary || 'None'}</p>
+                        <p><strong>Message:</strong> ${attendee.message || 'No message'}</p>
+                    `;
+                } else {
+                    detailsHTML += `
+                        <p><strong>Reason for not attending:</strong> ${attendee.reason || 'No reason provided'}</p>
+                    `;
+                }
+                
+                detailsHTML += `
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-danger" onclick="deleteAttendeeByInvitationPassword('${invitation.password}')">Delete RSVP</button>
+                            <button class="btn" onclick="closeGuestDetails()">Close</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                detailsHTML += `
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="color: #666; font-size: 18px;">No RSVP found for this guest</p>
+                        <button class="btn" onclick="closeGuestDetails()">Close</button>
+                    </div>
+                `;
+            }
+            
+            detailsHTML += '</div>';
+            
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.id = 'guestDetailsModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 2000;
+            `;
+            modal.innerHTML = detailsHTML;
+            document.body.appendChild(modal);
+        }
+
+        // Close guest details modal
+        function closeGuestDetails() {
+            const modal = document.getElementById('guestDetailsModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Delete attendee by invitation password
+        function deleteAttendeeByInvitationPassword(invitationPassword) {
+            if (confirm(`Are you sure you want to delete the RSVP for this invitation?`)) {
+                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+                const updatedAttendees = attendees.filter(att => att.invitationPassword !== invitationPassword);
+                localStorage.setItem('weddingAttendees', JSON.stringify(updatedAttendees));
+                
+                // Refresh data and close modal
+                loadAdminData();
+                closeGuestDetails();
+                alert('RSVP deleted successfully!');
+            }
+        }
+
+        // Delete invitation
+        function deleteInvitation(index) {
+            if (confirm('Are you sure you want to delete this invitation?')) {
+                const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+                invitations.splice(index, 1);
+                localStorage.setItem('invitations', JSON.stringify(invitations));
+                loadInvitationsData();
+                alert('Invitation deleted successfully!');
+            }
+        }
+
+        // Copy password to clipboard
+        function copyPassword(password) {
+            navigator.clipboard.writeText(password).then(() => {
+                alert('Password copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = password;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Password copied to clipboard!');
+            });
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+            if (attendees.length === 0) {
+                alert('No data to export.');
+                return;
+            }
+
+            let csv = 'Name,City,Relationship,Companion,RSVP Status,Details\n';
+            attendees.forEach(attendee => {
+                csv += `"${attendee.name}","${attendee.city || ''}","${attendee.relationship || ''}","${attendee.companionName || ''}","${attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming'}","${attendee.dietary || attendee.reason || 'No details'}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wedding_attendees.csv';
+            a.click();
+        }
+
+        // Export to JSON
+        function exportToJSON() {
+            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+            if (attendees.length === 0) {
+                alert('No data to export.');
+                return;
+            }
+
+            const dataStr = JSON.stringify(attendees, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wedding_attendees.json';
+            a.click();
+        }
+
+        // Clear all data
+        function clearAllData() {
+            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            
+            const totalItems = attendees.length + invitations.length;
+            
+            if (totalItems === 0) {
+                alert('No data to clear. All data is already empty.');
+                return;
+            }
+            
+            const warningMessage = `⚠️ WARNING: This will permanently delete ALL data!\n\n` +
+                `This includes:\n` +
+                `• ${attendees.length} RSVP responses (attendees)\n` +
+                `• ${invitations.length} generated invitations\n` +
+                `• All guest details, messages, and statistics\n\n` +
+                `This action CANNOT be undone!\n\n` +
+                `Are you absolutely sure you want to proceed?`;
+            
+            if (confirm(warningMessage)) {
+                // Double confirmation for safety
+                if (confirm('This is your final warning!\n\nClick OK to PERMANENTLY DELETE all wedding data, or Cancel to keep your data safe.')) {
+                    // Clear both attendees and invitations
+                    localStorage.removeItem('weddingAttendees');
+                    localStorage.removeItem('invitations');
+                    
+                    // Refresh all displays
+                    loadAdminData();
+                    loadInvitationsData();
+                    updateStatistics();
+                    
+                    alert('✅ All data has been successfully cleared!\n\nAll RSVP responses and invitations have been permanently deleted.');
+                } else {
+                    alert('Data deletion cancelled. Your data is safe.');
+                }
+            } else {
+                alert('Data deletion cancelled. Your data is safe.');
+            }
+        }
+
+        // Refresh data
+        function refreshData() {
+            console.log('Manual refresh triggered...');
+            loadAdminData();
+            alert('Data refreshed successfully!');
+        }
+
+        // Update last refresh time
+        function updateLastRefreshTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+            
+            // Create or update the last refresh indicator
+            let refreshIndicator = document.getElementById('lastRefreshTime');
+            if (!refreshIndicator) {
+                refreshIndicator = document.createElement('div');
+                refreshIndicator.id = 'lastRefreshTime';
+                refreshIndicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 10px 15px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    z-index: 1000;
+                    backdrop-filter: blur(10px);
+                `;
+                document.body.appendChild(refreshIndicator);
+            }
+            
+            refreshIndicator.textContent = `Last updated: ${dateString} ${timeString}`;
+            
+            // Fade out after 3 seconds
+            setTimeout(() => {
+                refreshIndicator.style.opacity = '0.7';
+            }, 3000);
+        }
+
+        // Toggle auto-refresh
+        function toggleAutoRefresh() {
+            const toggleLink = document.getElementById('autoRefreshToggle');
+            const currentText = toggleLink.textContent;
+            const isOn = currentText.includes('ON');
+
+            if (isOn) {
+                stopAutoRefresh();
+                toggleLink.textContent = '⏰ Auto-Refresh: OFF';
+                toggleLink.style.color = '#f44336'; // Red color for off
+                alert('Auto-refresh disabled. Data will only update when you manually refresh.');
+            } else {
+                startAutoRefresh();
+                toggleLink.textContent = '⏰ Auto-Refresh: ON';
+                toggleLink.style.color = '#4caf50'; // Green color for on
+                alert('Auto-refresh enabled. Data will update every minute.');
+            }
+        }
+
+        // Handle Enter key in password field
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAdminPassword();
+            }
+        });
+
+        // Debug function to show raw data
+        function showDebugInfo() {
+            const debugOutput = document.getElementById('debugOutput');
+            const isVisible = debugOutput.style.display !== 'none';
+            
+            if (isVisible) {
+                debugOutput.style.display = 'none';
+            } else {
+                debugOutput.style.display = 'block';
+                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+                const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+                
+                debugOutput.innerHTML = `
+                    <h5>Wedding Attendees (${attendees.length} records):</h5>
+                    <pre>${JSON.stringify(attendees, null, 2)}</pre>
+                    <h5>Invitations (${invitations.length} records):</h5>
+                    <pre>${JSON.stringify(invitations, null, 2)}</pre>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 
