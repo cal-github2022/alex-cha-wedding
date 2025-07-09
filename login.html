@@ -252,6 +252,7 @@
                 sessionStorage.setItem('invitedGuest', invitation.guestName);
                 sessionStorage.setItem('canBringCompanion', invitation.canBringCompanion ? 'true' : 'false');
                 sessionStorage.setItem('invitationPassword', invitation.password);
+                sessionStorage.setItem('autoStartMusic', 'true'); // Flag to auto-start music
                 window.location.href = 'index.html';
                 return;
             }

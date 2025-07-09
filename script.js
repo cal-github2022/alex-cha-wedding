@@ -1,6 +1,14 @@
 // Set the wedding date (December 14th, 2024 at 4:00 PM)
 const weddingDate = new Date('December 14, 2024 16:00:00').getTime();
 
+// Music player variables
+let audio, isPlaying = false;
+
+// Initialize music player elements when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    audio = document.getElementById('backgroundMusic');
+});
+
 // Database functions
 function getAttendees() {
     const attendees = localStorage.getItem('weddingAttendees');
@@ -321,35 +329,50 @@ function checkExistingRSVP() {
 }
 
 // Music Player Functionality
-let isPlaying = false;
-const audio = document.getElementById('backgroundMusic');
-const playPauseBtn = document.getElementById('playPauseBtn');
-const playIcon = document.getElementById('playIcon');
-const volumeSlider = document.getElementById('volumeSlider');
-
-// Initialize music player
 function initMusicPlayer() {
     console.log('Initializing music player...');
     
-    if (!audio || !playPauseBtn || !playIcon || !volumeSlider) {
-        console.log('Music player elements not found:', {
-            audio: !!audio,
-            playPauseBtn: !!playPauseBtn,
-            playIcon: !!playIcon,
-            volumeSlider: !!volumeSlider
-        });
+    if (!audio) {
+        console.log('Music player element not found.');
         return;
     }
     
-    console.log('All music player elements found!');
+    console.log('Music player element found!');
     
-    // Set initial volume
-    audio.volume = volumeSlider.value / 100;
+    // Set default volume (25% - gentle background music)
+    audio.volume = 0.25;
     console.log('Volume set to:', audio.volume);
     
-    // Add event listeners
-    playPauseBtn.addEventListener('click', togglePlayPause);
-    volumeSlider.addEventListener('input', adjustVolume);
+    // Add event listeners for auto-play
+    audio.addEventListener('canplay', function() {
+        console.log('Audio can play!');
+        
+        // Check if we should auto-start music after login
+        const shouldAutoStart = sessionStorage.getItem('autoStartMusic');
+        if (shouldAutoStart === 'true') {
+            console.log('Auto-starting music after login...');
+            sessionStorage.removeItem('autoStartMusic'); // Remove flag after use
+            
+            // Auto-start music with a small delay for better UX
+            setTimeout(() => {
+                audio.play().then(() => {
+                    console.log('Music auto-started successfully!');
+                    isPlaying = true;
+                    // Show a subtle notification
+                    showMusicStartedNotification();
+                }).catch(err => {
+                    console.error('Auto-play failed:', err);
+                    console.log('Browser blocked auto-play, will try on first user interaction');
+                    // Add fallback for browsers that block auto-play
+                    addAutoPlayFallback();
+                });
+            }, 1000); // 1 second delay for smoother experience
+        }
+    });
+    
+    audio.addEventListener('loadeddata', function() {
+        console.log('Audio data loaded successfully!');
+    });
     
     // Add error handling for audio
     audio.addEventListener('error', function(e) {
@@ -357,37 +380,26 @@ function initMusicPlayer() {
         console.error('Audio error details:', audio.error);
     });
     
-    audio.addEventListener('loadstart', function() {
-        console.log('Audio loading started...');
-    });
-    
-    audio.addEventListener('canplay', function() {
-        console.log('Audio can play!');
-    });
-    
-    audio.addEventListener('loadeddata', function() {
-        console.log('Audio data loaded successfully!');
-    });
-    
     // Try to load the audio
     audio.load();
     
-    // Auto-play on first user interaction
+    console.log('Music player initialization complete!');
+}
+
+// Add fallback for browsers that block auto-play
+function addAutoPlayFallback() {
     document.addEventListener('click', function() {
         console.log('User clicked, attempting to play music...');
         if (!isPlaying && audio.paused) {
             audio.play().then(() => {
-                console.log('Music started playing successfully!');
+                console.log('Music started playing successfully after user interaction!');
                 isPlaying = true;
-                updatePlayButton();
+                showMusicStartedNotification();
             }).catch(err => {
-                console.error('Auto-play failed:', err);
-                console.log('User needs to manually click the play button');
+                console.error('Play failed even after user interaction:', err);
             });
         }
     }, { once: true });
-    
-    console.log('Music player initialization complete!');
 }
 
 // Toggle play/pause
@@ -407,21 +419,17 @@ function togglePlayPause() {
             alert('Unable to play music. Please check your audio settings or try a different browser.');
         });
     }
-    updatePlayButton();
+    // No need to call updatePlayButton() as there's no visible button
 }
 
 // Update play button appearance
 function updatePlayButton() {
-    if (isPlaying) {
-        playIcon.textContent = '⏸';
-    } else {
-        playIcon.textContent = '▶';
-    }
+    // No visible button to update
 }
 
 // Adjust volume
 function adjustVolume() {
-    audio.volume = volumeSlider.value / 100;
+    // No visible volume slider
 }
 
 // Handle audio events
@@ -432,12 +440,12 @@ if (audio) {
 
     audio.addEventListener('play', function() {
         isPlaying = true;
-        updatePlayButton();
+        // No need to call updatePlayButton() as there's no visible button
     });
 
     audio.addEventListener('pause', function() {
         isPlaying = false;
-        updatePlayButton();
+        // No need to call updatePlayButton() as there's no visible button
     });
 }
 
@@ -570,4 +578,44 @@ function showAdminPanel() {
     
     // Export data
     exportAttendeesData();
+} 
+
+// Show a subtle notification that music has started
+function showMusicStartedNotification() {
+    const notification = document.createElement('div');
+    notification.textContent = '🎵 Romantic piano music is playing softly in the background';
+    notification.style.cssText = `
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 12px 18px;
+        border-radius: 20px;
+        font-size: 13px;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        max-width: 250px;
+        text-align: center;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Fade in
+    setTimeout(() => {
+        notification.style.opacity = '1';
+    }, 100);
+    
+    // Fade out and remove after 4 seconds (longer since it's informative)
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 4000);
 } 

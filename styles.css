@@ -43,17 +43,17 @@ body {
 /* Default background images - replace with your prenup pictures */
 .slide:nth-child(1) {
     background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                      url('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+                      url('https://picsum.photos/1920/1080?random=1&blur=1');
 }
 
 .slide:nth-child(2) {
     background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                      url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80');
+                      url('https://picsum.photos/1920/1080?random=2&blur=1');
 }
 
 .slide:nth-child(3) {
     background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                      url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+                      url('https://picsum.photos/1920/1080?random=3&blur=1');
 }
 
 .overlay {
@@ -503,18 +503,16 @@ html {
 /* Music Player Styles */
 .music-player {
     position: fixed;
-    top: 15px;
-    right: 15px;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(15px);
-    border-radius: 20px;
-    padding: 8px 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
     z-index: 1000;
-    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
-    min-width: 180px;
-    max-width: 220px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: none; /* Hide the music player completely */
 }
 
 .music-player:hover {
