@@ -2,11 +2,14 @@
 const weddingDate = new Date('December 14, 2024 16:00:00').getTime();
 
 // Music player variables
-let audio, isPlaying = false;
+let audio, playPauseBtn, playIcon, volumeSlider, isPlaying = false;
 
 // Initialize music player elements when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     audio = document.getElementById('backgroundMusic');
+    playPauseBtn = document.getElementById('playPauseBtn');
+    playIcon = document.getElementById('playIcon');
+    volumeSlider = document.getElementById('volumeSlider');
 });
 
 // Database functions
@@ -332,74 +335,179 @@ function checkExistingRSVP() {
 function initMusicPlayer() {
     console.log('Initializing music player...');
     
-    if (!audio) {
-        console.log('Music player element not found.');
+    if (!audio || !playPauseBtn || !playIcon || !volumeSlider) {
+        console.log('Music player elements not found:', {
+            audio: !!audio,
+            playPauseBtn: !!playPauseBtn,
+            playIcon: !!playIcon,
+            volumeSlider: !!volumeSlider
+        });
+        
+        // Try to find elements again
+        setTimeout(() => {
+            audio = document.getElementById('backgroundMusic');
+            playPauseBtn = document.getElementById('playPauseBtn');
+            playIcon = document.getElementById('playIcon');
+            volumeSlider = document.getElementById('volumeSlider');
+            
+            if (audio && playPauseBtn && playIcon && volumeSlider) {
+                console.log('Music player elements found on retry!');
+                initMusicPlayer();
+            } else {
+                console.error('Music player elements still not found after retry');
+            }
+        }, 1000);
         return;
     }
     
-    console.log('Music player element found!');
+    console.log('Music player elements found!');
+    console.log('Audio element:', audio);
+    console.log('Audio sources:', audio.children.length);
     
     // Set default volume (25% - gentle background music)
     audio.volume = 0.25;
+    volumeSlider.value = 25;
     console.log('Volume set to:', audio.volume);
     
-    // Add event listeners for auto-play
-    audio.addEventListener('canplay', function() {
-        console.log('Audio can play!');
+    // Add event listeners
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    volumeSlider.addEventListener('input', adjustVolume);
+    
+    // Check if we should auto-start music immediately (right after login)
+    const shouldAutoStart = sessionStorage.getItem('autoStartMusic');
+    if (shouldAutoStart === 'true') {
+        console.log('Auto-start flag detected! Attempting to start music after login...');
+        sessionStorage.removeItem('autoStartMusic'); // Remove flag after use
         
-        // Check if we should auto-start music after login
-        const shouldAutoStart = sessionStorage.getItem('autoStartMusic');
-        if (shouldAutoStart === 'true') {
-            console.log('Auto-starting music after login...');
-            sessionStorage.removeItem('autoStartMusic'); // Remove flag after use
-            
-            // Auto-start music with a small delay for better UX
-            setTimeout(() => {
-                audio.play().then(() => {
-                    console.log('Music auto-started successfully!');
-                    isPlaying = true;
-                    // Show a subtle notification
-                    showMusicStartedNotification();
-                }).catch(err => {
-                    console.error('Auto-play failed:', err);
-                    console.log('Browser blocked auto-play, will try on first user interaction');
-                    // Add fallback for browsers that block auto-play
-                    addAutoPlayFallback();
-                });
-            }, 1000); // 1 second delay for smoother experience
-        }
+        // Try to start music immediately
+        setTimeout(() => {
+            attemptAutoStart();
+        }, 1000); // Small delay to ensure audio is ready
+    }
+    
+    // Enhanced audio event listeners
+    audio.addEventListener('loadstart', function() {
+        console.log('Audio loading started...');
+    });
+    
+    audio.addEventListener('loadedmetadata', function() {
+        console.log('Audio metadata loaded!');
+        console.log('Duration:', audio.duration);
     });
     
     audio.addEventListener('loadeddata', function() {
         console.log('Audio data loaded successfully!');
     });
     
-    // Add error handling for audio
+    audio.addEventListener('canplay', function() {
+        console.log('Audio can play!');
+    });
+    
+    audio.addEventListener('canplaythrough', function() {
+        console.log('Audio can play through without stopping!');
+    });
+    
+    // Add comprehensive error handling for audio
     audio.addEventListener('error', function(e) {
-        console.error('Audio error:', e);
+        console.error('Audio error occurred:', e);
         console.error('Audio error details:', audio.error);
+        console.error('Error code:', audio.error ? audio.error.code : 'unknown');
+        console.error('Error message:', audio.error ? audio.error.message : 'unknown');
+        
+        // Try to load next source
+        console.log('Attempting to load next audio source...');
+    });
+    
+    audio.addEventListener('stalled', function() {
+        console.warn('Audio loading stalled');
+    });
+    
+    audio.addEventListener('suspend', function() {
+        console.warn('Audio loading suspended');
+    });
+    
+    audio.addEventListener('abort', function() {
+        console.warn('Audio loading aborted');
     });
     
     // Try to load the audio
+    console.log('Loading audio...');
     audio.load();
+    
+    // Also try to start loading immediately
+    setTimeout(() => {
+        if (audio.readyState === 0) {
+            console.log('Audio not loaded yet, trying to load again...');
+            audio.load();
+        } else {
+            console.log('Audio ready state:', audio.readyState);
+        }
+    }, 2000);
     
     console.log('Music player initialization complete!');
 }
 
+// New function to handle auto-start attempts
+function attemptAutoStart() {
+    console.log('Attempting to auto-start music...');
+    
+    if (!audio) {
+        console.error('Audio element not found for auto-start');
+        return;
+    }
+    
+    audio.play().then(() => {
+        console.log('🎵 Music auto-started successfully after login!');
+        isPlaying = true;
+        updatePlayButton();
+        showMusicStartedNotification();
+    }).catch(err => {
+        console.error('Auto-play failed:', err);
+        console.log('Browser blocked auto-play, will try on first user interaction');
+        addAutoPlayFallback();
+    });
+}
+
 // Add fallback for browsers that block auto-play
 function addAutoPlayFallback() {
-    document.addEventListener('click', function() {
-        console.log('User clicked, attempting to play music...');
+    console.log('Setting up auto-play fallback...');
+    
+    // Only add fallback if music should have started but didn't
+    const fallbackHandler = function(event) {
+        // Only trigger on clicks that aren't on buttons or form elements
+        if (event.target.tagName === 'BUTTON' || 
+            event.target.tagName === 'INPUT' || 
+            event.target.tagName === 'TEXTAREA' ||
+            event.target.tagName === 'SELECT' ||
+            event.target.closest('.rsvp-btn') ||
+            event.target.closest('.modal')) {
+            console.log('Ignoring click on UI element for music fallback');
+            return;
+        }
+        
+        console.log('User clicked on safe area, attempting to play music...');
         if (!isPlaying && audio.paused) {
             audio.play().then(() => {
                 console.log('Music started playing successfully after user interaction!');
                 isPlaying = true;
+                updatePlayButton();
                 showMusicStartedNotification();
+                // Remove the fallback listener once music starts
+                document.removeEventListener('click', fallbackHandler);
             }).catch(err => {
                 console.error('Play failed even after user interaction:', err);
             });
         }
-    }, { once: true });
+    };
+    
+    // Add the listener
+    document.addEventListener('click', fallbackHandler);
+    
+    // Remove fallback after 30 seconds to prevent unwanted triggers
+    setTimeout(() => {
+        document.removeEventListener('click', fallbackHandler);
+        console.log('Auto-play fallback timeout - removed listener');
+    }, 30000);
 }
 
 // Toggle play/pause
@@ -419,17 +527,21 @@ function togglePlayPause() {
             alert('Unable to play music. Please check your audio settings or try a different browser.');
         });
     }
-    // No need to call updatePlayButton() as there's no visible button
+    updatePlayButton();
 }
 
 // Update play button appearance
 function updatePlayButton() {
-    // No visible button to update
+    if (isPlaying) {
+        playIcon.textContent = '⏸';
+    } else {
+        playIcon.textContent = '▶';
+    }
 }
 
 // Adjust volume
 function adjustVolume() {
-    // No visible volume slider
+    audio.volume = volumeSlider.value / 100;
 }
 
 // Handle audio events
@@ -440,12 +552,12 @@ if (audio) {
 
     audio.addEventListener('play', function() {
         isPlaying = true;
-        // No need to call updatePlayButton() as there's no visible button
+        updatePlayButton();
     });
 
     audio.addEventListener('pause', function() {
         isPlaying = false;
-        // No need to call updatePlayButton() as there's no visible button
+        updatePlayButton();
     });
 }
 
@@ -511,44 +623,33 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Initialize everything when the page loads
+// Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing wedding site...');
+    
+    // Initialize music player elements
+    audio = document.getElementById('backgroundMusic');
+    playPauseBtn = document.getElementById('playPauseBtn');
+    playIcon = document.getElementById('playIcon');
+    volumeSlider = document.getElementById('volumeSlider');
+    
     // Initialize music player
     initMusicPlayer();
     
-    // Start the countdown timer
+    // Start countdown timer
     updateCountdown();
     setInterval(updateCountdown, 1000);
-
-    // Start the background slideshow
+    
+    // Start background slideshow
     startSlideshow();
-
-    // Check for existing RSVP
-    checkExistingRSVP();
-
+    
     // Add interactive effects
     addInteractiveEffects();
-
-    // Add some nice entrance animations
-    const sections = document.querySelectorAll('.countdown-section, .rsvp-section, .details-section');
-    sections.forEach((section, index) => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(30px)';
-        
-        setTimeout(() => {
-            section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-            section.style.opacity = '1';
-            section.style.transform = 'translateY(0)';
-        }, index * 200);
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        const modal = document.getElementById('attendeeModal');
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
+    
+    // Check for existing RSVP
+    checkExistingRSVP();
+    
+    console.log('Wedding site initialization complete!');
 });
 
 // Admin functions (for the couple to access attendee data)
