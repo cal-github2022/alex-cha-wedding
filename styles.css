@@ -44,23 +44,23 @@ body {
 }
 
 /* Beautiful gradient backgrounds that always work */
-/* Elegant wedding-themed backgrounds - reliable on all platforms */
+/* Wedding background images restored */
 .slide:nth-child(1) {
-    background: linear-gradient(135deg, #f7f3ef 0%, #e8ddd4 25%, #d4c4b0 50%, #c9b79c 75%, #b8a082 100%);
-    /* Elegant champagne/gold wedding theme */
-    border: 3px solid red; /* Temporary debug border */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&h=1080&fit=crop&crop=center');
+    /* Elegant wedding ceremony scene */
 }
 
 .slide:nth-child(2) {
-    background: linear-gradient(135deg, #fdf2f8 0%, #f7e6f0 25%, #f3d5e7 50%, #e8b4cb 75%, #dda0c2 100%);
-    /* Soft blush pink wedding theme */
-    border: 3px solid green; /* Temporary debug border */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=1920&h=1080&fit=crop&crop=center');
+    /* Romantic couple wedding photo */
 }
 
 .slide:nth-child(3) {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 25%, #e2e8f0 50%, #cbd5e1 75%, #94a3b8 100%);
-    /* Elegant dusty blue wedding theme */
-    border: 3px solid blue; /* Temporary debug border */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1920&h=1080&fit=crop&crop=center');
+    /* Classic wedding venue shot */
 }
 
 .overlay {
