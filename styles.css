@@ -33,24 +33,33 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 1; /* Always visible */
+    opacity: 0;
+    transition: opacity 3s ease-in-out;
 }
 
-/* Just show the first slide with wedding image */
+/* Wedding image slideshow - all three slides */
 .slide:nth-child(1) {
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
                 url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&h=1080&fit=crop&crop=center');
     /* Elegant wedding ceremony scene */
-    z-index: 1;
 }
 
-/* Hide other slides for now to avoid conflicts */
 .slide:nth-child(2) {
-    display: none;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=1920&h=1080&fit=crop&crop=center');
+    /* Romantic couple wedding photo */
 }
 
 .slide:nth-child(3) {
-    display: none;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1920&h=1080&fit=crop&crop=center');
+    /* Classic wedding venue shot */
+}
+
+/* Active slide is visible */
+.slide:first-child,
+.slide.active {
+    opacity: 1;
 }
 
 .overlay {
