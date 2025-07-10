@@ -296,6 +296,47 @@
                 <!-- Invitation Management -->
                 <div class="section">
                     <h2>🎫 Invitation Management</h2>
+                    
+                    <!-- Cloud Sync Feature -->
+                    <div style="padding: 15px; background: #e3f2fd; border-radius: 10px; border: 1px solid #2196f3; margin-bottom: 20px;">
+                        <h3 style="color: #1976d2; margin: 0 0 10px 0;">📡 Mobile Device Sync</h3>
+                        <p style="margin: 0 0 15px 0; color: #333; font-size: 14px;">
+                            <strong>Important:</strong> Guest passwords created here only work on this device by default. 
+                            To make them work on mobile devices, use the sync options below:
+                        </p>
+                        
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn" onclick="generateShareableLink()" style="background: #2196f3;">
+                                📱 Generate Mobile Sync Code
+                            </button>
+                            <button class="btn" onclick="exportInvitationsJSON()" style="background: #4caf50;">
+                                💾 Download Invitations Data
+                            </button>
+                            <input type="file" id="importInvitations" accept=".json" style="display: none;" onchange="importInvitationsJSON(event)">
+                            <button class="btn" onclick="document.getElementById('importInvitations').click()" style="background: #ff9800;">
+                                📤 Upload Invitations Data
+                            </button>
+                        </div>
+                        
+                        <div id="shareableCodeResult" style="display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 5px; border: 1px solid #ddd;">
+                            <h4 style="margin: 0 0 10px 0; color: #333;">📱 Mobile Sync Instructions:</h4>
+                            <ol style="margin: 0; padding-left: 20px; color: #333; font-size: 13px;">
+                                <li>Copy the sync code below</li>
+                                <li>Open your website on any mobile device</li>
+                                <li>Tap the wedding icon 💒 5 times to open debug panel</li>
+                                <li>Paste the sync code and click "Sync"</li>
+                                <li>All guest passwords will now work on that device!</li>
+                            </ol>
+                            <div style="margin: 10px 0;">
+                                <strong>Sync Code:</strong>
+                                <textarea id="syncCodeDisplay" readonly style="width: 100%; height: 60px; font-family: monospace; font-size: 11px; padding: 5px; resize: vertical;"></textarea>
+                            </div>
+                            <button class="btn" onclick="copySyncCode()" style="background: #4caf50; padding: 5px 15px; font-size: 12px;">
+                                📋 Copy Sync Code
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div style="padding: 20px; background: #e8f5e8; border-radius: 10px; border: 1px solid #4caf50;">
                         <h3>Create Guest Invitations</h3>
                         <p><strong>Generate unique passwords for specific guests - you can create your own passwords or auto-generate them:</strong></p>
@@ -1268,6 +1309,90 @@
             }
 
             return null; // Let caller fallback to random generation
+        }
+
+        // Cloud Sync Functions
+        function generateShareableLink() {
+            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            const baseUrl = window.location.origin + window.location.pathname;
+            const syncCode = `wedding-sync://${baseUrl}?invitations=${encodeURIComponent(JSON.stringify(invitations))}`;
+            
+            document.getElementById('syncCodeDisplay').value = syncCode;
+            document.getElementById('shareableCodeResult').style.display = 'block';
+            alert('Shareable link generated! Copy it to your mobile device.');
+        }
+
+        function copySyncCode() {
+            const syncCode = document.getElementById('syncCodeDisplay').value;
+            navigator.clipboard.writeText(syncCode).then(() => {
+                alert('Sync code copied to clipboard!');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = syncCode;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Sync code copied to clipboard!');
+            });
+        }
+
+        function exportInvitationsJSON() {
+            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            const dataStr = JSON.stringify(invitations, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wedding_invitations.json';
+            a.click();
+            alert('Invitations data downloaded as wedding_invitations.json');
+        }
+
+        function importInvitationsJSON(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                alert('Please select a file to import.');
+                return;
+            }
+
+            if (!file.name.endsWith('.json')) {
+                alert('Please select a valid JSON file (.json) to import.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedInvitations = JSON.parse(e.target.result);
+                    if (!Array.isArray(importedInvitations)) {
+                        alert('The imported file does not contain a valid array of invitations.');
+                        return;
+                    }
+
+                    const currentInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+                    const newInvitations = [...currentInvitations];
+
+                    // Merge imported invitations, prioritizing existing ones
+                    importedInvitations.forEach(importedInv => {
+                        const existingIndex = newInvitations.findIndex(inv => inv.password === importedInv.password);
+                        if (existingIndex !== -1) {
+                            newInvitations[existingIndex] = importedInv; // Update existing
+                        } else {
+                            newInvitations.push(importedInv); // Add new
+                        }
+                    });
+
+                    localStorage.setItem('invitations', JSON.stringify(newInvitations));
+                    alert('Invitations data imported successfully!');
+                    loadInvitationsData();
+                    updateStatistics();
+                } catch (error) {
+                    console.error('Error importing invitations:', error);
+                    alert('Error importing invitations: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>

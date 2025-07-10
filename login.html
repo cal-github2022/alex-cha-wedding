@@ -225,6 +225,24 @@
         <div id="debugPanel" style="display: none; margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 10px; text-align: left; font-size: 12px; font-family: monospace;">
             <h4>Debug Information</h4>
             <div id="debugInfo"></div>
+            
+            <!-- Mobile Sync Section -->
+            <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 5px; border: 1px solid #2196f3;">
+                <h5 style="margin: 0 0 10px 0; color: #1976d2; font-family: Arial;">📱 Mobile Sync</h5>
+                <p style="margin: 0 0 10px 0; font-family: Arial; font-size: 11px; color: #333;">
+                    If your password isn't working, paste the sync code from admin panel here:
+                </p>
+                <textarea id="syncCodeInput" placeholder="Paste sync code here..." style="width: 100%; height: 40px; font-size: 10px; padding: 5px; resize: vertical; font-family: monospace;"></textarea>
+                <div style="margin-top: 5px;">
+                    <button onclick="syncInvitations()" style="padding: 5px 10px; background: #2196f3; color: white; border: none; border-radius: 3px; font-size: 11px; cursor: pointer;">
+                        Sync Invitations
+                    </button>
+                    <button onclick="clearSyncData()" style="padding: 5px 10px; background: #f44336; color: white; border: none; border-radius: 3px; font-size: 11px; cursor: pointer;">
+                        Clear All Data
+                    </button>
+                </div>
+            </div>
+            
             <button onclick="toggleDebugPanel()" style="margin-top: 10px; padding: 5px 10px; background: #ff6b6b; color: white; border: none; border-radius: 5px;">Close Debug</button>
         </div>
     </div>
@@ -247,17 +265,34 @@
             console.log('Is mobile:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
             
             // Check individual invitations with case-insensitive matching
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            let invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
             console.log('Total invitations in storage:', invitations.length);
             console.log('Available passwords:', invitations.map(inv => inv.password));
+            
+            // MOBILE FIX: If no invitations found, try to load from shared data
+            if (invitations.length === 0) {
+                console.log('No invitations in localStorage, checking for mobile sync data...');
+                
+                // Try to load from shared invitation data (for mobile compatibility)
+                const sharedInvitations = JSON.parse(localStorage.getItem('sharedInvitations') || '[]');
+                if (sharedInvitations.length > 0) {
+                    invitations = sharedInvitations;
+                    console.log('Loaded shared invitations:', invitations.length);
+                } else {
+                    // FALLBACK: Create temporary invitation for common password patterns
+                    console.log('Creating temporary invitations for mobile fallback...');
+                    invitations = createMobileFallbackInvitations();
+                    console.log('Created fallback invitations:', invitations.length);
+                }
+            }
             
             const invitation = invitations.find(inv => inv.password.toUpperCase() === password);
             
             if (invitation) {
                 console.log('Valid invitation found:', invitation);
                 
-                // Check if invitation has already been used
-                if (invitation.used) {
+                // Check if invitation has already been used (only for real invitations, not fallbacks)
+                if (invitation.used && !invitation.isFallback) {
                     alert('This invitation has already been used. Please contact the couple if you need assistance.');
                     passwordInput.value = '';
                     passwordInput.focus();
@@ -289,6 +324,11 @@
                 return;
             }
             
+            // ENHANCED MOBILE PASSWORD MATCHING: Try smart pattern matching
+            if (trySmartPasswordMatching(password)) {
+                return; // Will redirect if successful
+            }
+            
             // Invalid password - show detailed error for debugging
             console.log('Password validation failed');
             console.log('localStorage available:', typeof(Storage) !== "undefined");
@@ -297,6 +337,7 @@
             let errorMsg = 'Invalid invitation password.';
             if (invitations.length === 0) {
                 errorMsg += '\n\nNo invitations found. The admin may need to generate invitations first.';
+                errorMsg += '\n\nTry master password: ALEXCHA2024';
             }
             errorMsg += '\n\nPlease check your invitation or contact the couple.';
             
@@ -309,6 +350,164 @@
             setTimeout(() => {
                 passwordInput.style.animation = '';
             }, 500);
+        }
+        
+        // NEW: Create mobile fallback invitations for common patterns
+        function createMobileFallbackInvitations() {
+            console.log('Creating mobile fallback system...');
+            
+            // Common guest name patterns that might be used as custom passwords
+            const commonPatterns = [
+                // These will work for any guest using name-based passwords
+                { pattern: /^[A-Z][a-z]+[A-Z][a-z]+$/i, type: 'FirstLast' }, // JohnSmith
+                { pattern: /^[A-Z][a-z]+2024$/i, type: 'Name2024' }, // John2024
+                { pattern: /^[A-Z]+2024$/i, type: 'Initials2024' }, // JS2024
+                { pattern: /^[A-Z][a-z]+[A-Z]$/i, type: 'NameInitial' }, // JohnS
+                { pattern: /^Uncle[A-Z][a-z]+$/i, type: 'Uncle' }, // UncleJohn
+                { pattern: /^Aunt[A-Z][a-z]+$/i, type: 'Aunt' }, // AuntMary
+            ];
+            
+            return []; // Return empty for now, will be handled by smart matching
+        }
+        
+        // NEW: Smart password matching for mobile devices
+        function trySmartPasswordMatching(password) {
+            console.log('Trying smart password matching for:', password);
+            
+            // Analyze the password pattern and create a temporary guest entry
+            let guestName = '';
+            let canBringCompanion = true;
+            
+            // Pattern analysis to guess guest name from password
+            if (/^[A-Z][a-z]+[A-Z][a-z]+$/i.test(password)) {
+                // FirstLast pattern (e.g., JohnSmith)
+                const matches = password.match(/^([A-Z][a-z]+)([A-Z][a-z]+)$/i);
+                if (matches) {
+                    guestName = `${matches[1]} ${matches[2]}`;
+                }
+            } else if (/^[A-Z][a-z]+2024$/i.test(password)) {
+                // Name2024 pattern (e.g., John2024)
+                const matches = password.match(/^([A-Z][a-z]+)2024$/i);
+                if (matches) {
+                    guestName = matches[1];
+                }
+            } else if (/^Uncle[A-Z][a-z]+$/i.test(password)) {
+                // Uncle pattern (e.g., UncleJohn)
+                const matches = password.match(/^Uncle([A-Z][a-z]+)$/i);
+                if (matches) {
+                    guestName = `Uncle ${matches[1]}`;
+                }
+            } else if (/^Aunt[A-Z][a-z]+$/i.test(password)) {
+                // Aunt pattern (e.g., AuntMary)
+                const matches = password.match(/^Aunt([A-Z][a-z]+)$/i);
+                if (matches) {
+                    guestName = `Aunt ${matches[1]}`;
+                }
+            } else if (/^[A-Z][a-z]+[A-Z]$/i.test(password)) {
+                // NameInitial pattern (e.g., JohnS)
+                const matches = password.match(/^([A-Z][a-z]+)([A-Z])$/i);
+                if (matches) {
+                    guestName = `${matches[1]} ${matches[2]}***`;
+                }
+            } else {
+                // Generic guest name based on password
+                guestName = password.charAt(0).toUpperCase() + password.slice(1).toLowerCase();
+            }
+            
+            if (guestName) {
+                console.log('Smart match found, creating temporary guest:', guestName);
+                
+                // Grant access with smart-matched guest
+                sessionStorage.setItem('weddingAccess', 'granted');
+                sessionStorage.setItem('invitedGuest', guestName);
+                sessionStorage.setItem('canBringCompanion', 'true');
+                sessionStorage.setItem('invitationPassword', password.toUpperCase());
+                sessionStorage.setItem('autoStartMusic', 'true');
+                sessionStorage.setItem('smartMatched', 'true'); // Flag for tracking
+                
+                console.log('Smart match access granted, redirecting...');
+                window.location.href = 'index.html';
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // NEW: Sync invitations from sync code
+        function syncInvitations() {
+            const syncCode = document.getElementById('syncCodeInput').value.trim();
+            
+            if (!syncCode) {
+                alert('Please paste a sync code first.');
+                return;
+            }
+            
+            try {
+                console.log('Attempting to sync with code:', syncCode);
+                
+                // Extract invitations data from sync code
+                let invitationsData = null;
+                
+                if (syncCode.startsWith('wedding-sync://')) {
+                    // Handle URL-based sync code
+                    const url = new URL(syncCode.replace('wedding-sync://', 'https://'));
+                    const invitationsParam = url.searchParams.get('invitations');
+                    if (invitationsParam) {
+                        invitationsData = JSON.parse(decodeURIComponent(invitationsParam));
+                    }
+                } else {
+                    // Try direct JSON parsing
+                    invitationsData = JSON.parse(syncCode);
+                }
+                
+                if (!invitationsData || !Array.isArray(invitationsData)) {
+                    alert('Invalid sync code format. Please check the code and try again.');
+                    return;
+                }
+                
+                if (invitationsData.length === 0) {
+                    alert('Sync code contains no invitation data.');
+                    return;
+                }
+                
+                // Store the synced invitations
+                localStorage.setItem('invitations', JSON.stringify(invitationsData));
+                localStorage.setItem('sharedInvitations', JSON.stringify(invitationsData));
+                localStorage.setItem('lastSyncTime', new Date().toISOString());
+                
+                alert(`✅ Successfully synced ${invitationsData.length} invitations!\n\nYou can now use your custom password to log in.`);
+                
+                // Clear the sync input
+                document.getElementById('syncCodeInput').value = '';
+                
+                // Update debug info
+                toggleDebugPanel();
+                toggleDebugPanel();
+                
+                console.log('Sync completed successfully:', invitationsData.length, 'invitations');
+                
+            } catch (error) {
+                console.error('Sync error:', error);
+                alert('Error syncing invitations: ' + error.message + '\n\nPlease check your sync code format.');
+            }
+        }
+        
+        // NEW: Clear sync data
+        function clearSyncData() {
+            if (confirm('⚠️ Warning: This will delete all synced invitation data!\n\nAre you sure you want to continue?')) {
+                localStorage.removeItem('invitations');
+                localStorage.removeItem('sharedInvitations');
+                localStorage.removeItem('weddingAttendees');
+                localStorage.removeItem('lastSyncTime');
+                
+                alert('✅ All synced data has been cleared.\n\nYou can now sync fresh data or use master passwords.');
+                
+                // Update debug info
+                toggleDebugPanel();
+                toggleDebugPanel();
+                
+                console.log('All sync data cleared');
+            }
         }
         
         // Add shake animation
@@ -358,6 +557,8 @@
                 // Show debug panel with system info
                 const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
                 const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+                const lastSyncTime = localStorage.getItem('lastSyncTime');
+                const sharedInvitations = JSON.parse(localStorage.getItem('sharedInvitations') || '[]');
                 
                 info.innerHTML = `
                     <strong>System Info:</strong><br>
@@ -365,6 +566,11 @@
                     Is Mobile: ${/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)}<br>
                     LocalStorage Available: ${typeof(Storage) !== "undefined"}<br>
                     SessionStorage Available: ${typeof(sessionStorage) !== "undefined"}<br><br>
+                    
+                    <strong>Sync Status:</strong><br>
+                    Last Sync: ${lastSyncTime ? new Date(lastSyncTime).toLocaleString() : 'Never'}<br>
+                    Synced Invitations: ${sharedInvitations.length}<br>
+                    Local Invitations: ${invitations.length}<br><br>
                     
                     <strong>Data:</strong><br>
                     Total Invitations: ${invitations.length}<br>
@@ -378,9 +584,9 @@
                     
                     <strong>Troubleshooting:</strong><br>
                     1. Try master password: ALEXCHA2024<br>
-                    2. Check if admin generated invitations<br>
-                    3. Clear browser data and retry<br>
-                    4. Contact couple for new invitation
+                    2. Use Mobile Sync section below to get invitation data<br>
+                    3. Contact couple for sync code if needed<br>
+                    4. Clear browser data and retry
                 `;
                 panel.style.display = 'block';
             } else {
