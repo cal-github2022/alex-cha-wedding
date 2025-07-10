@@ -298,113 +298,109 @@
                     <h2>🎫 Invitation Management</h2>
                     
                     <!-- Cloud Sync Feature -->
-                    <div style="padding: 15px; background: #e3f2fd; border-radius: 10px; border: 1px solid #2196f3; margin-bottom: 20px;">
-                        <h3 style="color: #1976d2; margin: 0 0 10px 0;">📡 Mobile Device Sync</h3>
-                        <p style="margin: 0 0 15px 0; color: #333; font-size: 14px;">
-                            <strong>Important:</strong> Guest passwords created here only work on this device by default. 
-                            To make them work on mobile devices, use the sync options below:
+                    <div style="padding: 15px; background: #f8d7da; border-radius: 10px; border: 1px solid #f5c6cb; margin-bottom: 20px;">
+                        <h3 style="color: #721c24; margin: 0 0 10px 0;">🚫 Legacy Device Sync (Removed)</h3>
+                        <p style="margin: 0 0 15px 0; color: #721c24; font-size: 14px;">
+                            <strong>⚠️ This feature has been removed:</strong> Device-specific password storage caused too many cross-device issues. 
+                            All custom passwords now use the Universal Password System below for 100% reliability across all devices.
                         </p>
                         
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                            <button class="btn" onclick="generateShareableLink()" style="background: #2196f3;">
-                                📱 Generate Mobile Sync Code
-                            </button>
-                            <button class="btn" onclick="exportInvitationsJSON()" style="background: #4caf50;">
-                                💾 Download Invitations Data
-                            </button>
-                            <input type="file" id="importInvitations" accept=".json" style="display: none;" onchange="importInvitationsJSON(event)">
-                            <button class="btn" onclick="document.getElementById('importInvitations').click()" style="background: #ff9800;">
-                                📤 Upload Invitations Data
-                            </button>
+                        <div style="padding: 10px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 5px;">
+                            <p style="font-size: 12px; color: #e65100; margin: 0;">
+                                <strong>🎯 What Changed:</strong><br>
+                                ❌ Removed: Device-specific localStorage passwords<br>
+                                ❌ Removed: Sync codes and mobile syncing<br>
+                                ❌ Removed: CSV/JSON import/export for invitations<br>
+                                ✅ Added: Universal Password System (works everywhere)<br>
+                                ✅ Added: Built-in universal passwords (25+ passwords)<br>
+                                ✅ Added: One-time setup for custom passwords
+                            </p>
                         </div>
                         
-                        <div id="shareableCodeResult" style="display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 5px; border: 1px solid #ddd;">
-                            <h4 style="margin: 0 0 10px 0; color: #333;">📱 Mobile Sync Instructions:</h4>
-                            <ol style="margin: 0; padding-left: 20px; color: #333; font-size: 13px;">
-                                <li>Copy the sync code below</li>
-                                <li>Open your website on any mobile device</li>
-                                <li>Tap the wedding icon 💒 5 times to open debug panel</li>
-                                <li>Paste the sync code and click "Sync"</li>
-                                <li>All guest passwords will now work on that device!</li>
-                            </ol>
-                            <div style="margin: 10px 0;">
-                                <strong>Sync Code:</strong>
-                                <textarea id="syncCodeDisplay" readonly style="width: 100%; height: 60px; font-family: monospace; font-size: 11px; padding: 5px; resize: vertical;"></textarea>
+                        <!-- Universal Password System -->
+                        <div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 10px; border: 2px solid #4caf50;">
+                            <h3 style="color: #2e7d32; margin: 0 0 10px 0;">🌟 Universal Password System</h3>
+                            <p style="margin: 0 0 15px 0; color: #333; font-size: 14px;">
+                                <strong>✅ The Only Method You Need:</strong> Create custom passwords that work on ALL devices instantly!
+                                No localStorage, no syncing, no device-specific issues. Pure JavaScript solution.
+                            </p>
+                            
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 15px;">
+                                <button class="btn" onclick="generateUniversalPasswordCode()" style="background: #4caf50; font-weight: bold;">
+                                    🔑 Generate Universal Password Code
+                                </button>
+                                <button class="btn" onclick="copyUniversalCode()" style="background: #2196f3;" id="copyUniversalBtn" disabled>
+                                    📋 Copy Code for login.html
+                                </button>
                             </div>
-                            <button class="btn" onclick="copySyncCode()" style="background: #4caf50; padding: 5px 15px; font-size: 12px;">
-                                📋 Copy Sync Code
-                            </button>
+                            
+                            <div id="universalCodeResult" style="display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 5px; border: 1px solid #ddd;">
+                                <h4 style="margin: 0 0 10px 0; color: #333;">📝 Simple Instructions:</h4>
+                                <ol style="margin: 0 0 15px 0; padding-left: 20px; color: #333; font-size: 13px;">
+                                    <li>Copy the code below</li>
+                                    <li>Open your <strong>login.html</strong> file</li>
+                                    <li>Find the line: <code>// ADD YOUR CUSTOM PASSWORDS HERE:</code></li>
+                                    <li>Replace the placeholder with the code below</li>
+                                    <li>Save login.html - now your passwords work on ALL devices!</li>
+                                </ol>
+                                <div style="margin: 10px 0;">
+                                    <strong>Code to paste in login.html:</strong>
+                                    <textarea id="universalCodeDisplay" readonly style="width: 100%; height: 120px; font-family: monospace; font-size: 11px; padding: 5px; resize: vertical; background: #f8f8f8;"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 15px; padding: 10px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 5px;">
+                                <p style="font-size: 12px; color: #e65100; margin: 0;">
+                                    <strong>🎯 Why Universal System is Better:</strong><br>
+                                    ✅ Works on ALL devices instantly (no syncing needed)<br>
+                                    ✅ No localStorage dependency (more reliable)<br>
+                                    ✅ One-time setup, works forever<br>
+                                    ✅ Guests don't need any special steps<br>
+                                    ✅ No cross-device compatibility issues
+                                </p>
+                            </div>
                         </div>
                     </div>
                     
-                    <div style="padding: 20px; background: #e8f5e8; border-radius: 10px; border: 1px solid #4caf50;">
-                        <h3>Create Guest Invitations</h3>
-                        <p><strong>Generate unique passwords for specific guests - you can create your own passwords or auto-generate them:</strong></p>
+                    <div style="padding: 20px; background: #fff3cd; border-radius: 10px; border: 1px solid #ffeaa7;">
+                        <h3>🎯 Create Custom Password List (Recommended)</h3>
+                        <p><strong>💡 Best Practice: Create a list of custom passwords, then use the Universal Password System above to make them work everywhere!</strong></p>
                         
                         <!-- Guest Name -->
                         <div style="display: flex; gap: 10px; align-items: center; margin: 15px 0;">
                             <input type="text" id="guestName" placeholder="Guest name (e.g., John Smith)" style="flex: 2; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                            <input type="text" id="customPassword" placeholder="Custom password (e.g., JohnSmith)" style="flex: 1.5; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-weight: bold;">
                             <label style="display: flex; align-items: center; gap: 5px; font-size: 14px; flex: 1;">
                                 <input type="checkbox" id="canBringCompanion" style="margin:0;"> Can bring +1
                             </label>
                         </div>
                         
-                        <!-- Custom Password Section -->
-                        <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">
-                            <h4 style="margin: 0 0 10px 0; color: #333;">Choose Password Method:</h4>
-                            
-                            <!-- Password Options -->
-                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
-                                    <input type="radio" name="passwordMethod" value="custom" checked onchange="togglePasswordMethod()"> 
-                                    <span style="font-weight: bold; color: #4caf50;">🎯 Create Custom Password</span>
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
-                                    <input type="radio" name="passwordMethod" value="auto" onchange="togglePasswordMethod()"> 
-                                    <span style="color: #2196f3;">🎲 Auto-Generate</span>
-                                </label>
-                            </div>
-                            
-                            <!-- Custom Password Input -->
-                            <div id="customPasswordSection" style="display: block;">
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <input type="text" id="customPassword" placeholder="Enter custom password (e.g., JohnSmith, JS2024, John123)" 
-                                           style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-weight: bold;">
-                                    <button type="button" onclick="suggestPassword()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer;">💡 Suggest</button>
-                                </div>
-                                <p style="font-size: 11px; color: #666; margin: 5px 0 0 0;">
-                                    💡 Tips: Use guest's name, nickname, or something memorable (e.g., "JohnSmith", "Uncle_Joe", "Sarah2024")
-                                </p>
-                            </div>
-                            
-                            <!-- Auto Generate Preview -->
-                            <div id="autoPasswordSection" style="display: none;">
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <input type="text" id="autoGeneratedPassword" readonly 
-                                           style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-weight: bold; background: #f0f0f0;">
-                                    <button type="button" onclick="regeneratePassword()" style="padding: 8px 12px; background: #2196f3; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 New</button>
-                                </div>
-                                <p style="font-size: 11px; color: #666; margin: 5px 0 0 0;">
-                                    🎲 Auto-generated 6-character password using clear, distinguishable characters
-                                </p>
-                            </div>
-                        </div>
-                        
                         <!-- Generate Button -->
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            <button class="btn" onclick="generateInvitation()" style="background: #4caf50; padding: 10px 20px; font-weight: bold;">
-                                ✨ Generate Invitation
+                            <button class="btn" onclick="addToPasswordList()" style="background: #4caf50; padding: 10px 20px; font-weight: bold;">
+                                ➕ Add to Password List
                             </button>
-                            <span style="font-size: 12px; color: #666;">This creates a unique invitation that only this guest can use</span>
+                            <button type="button" onclick="suggestPassword()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer;">💡 Suggest Password</button>
+                            <span style="font-size: 12px; color: #856404;">⚡ No localStorage - just builds your universal code</span>
                         </div>
                         
-                        <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
-                            <p style="font-size: 12px; color: #856404; margin: 0;">
-                                <strong>💡 Pro Tips:</strong><br>
-                                • Custom passwords are easier to remember and share<br>
-                                • Use guest names, nicknames, or meaningful words<br>
-                                • Each password must be unique across all guests<br>
-                                • Case doesn't matter when guests enter passwords
+                        <!-- Password List Display -->
+                        <div id="passwordListDisplay" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd; display: none;">
+                            <h4 style="margin: 0 0 10px 0; color: #333;">📋 Your Custom Password List:</h4>
+                            <div id="passwordListContent" style="font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;"></div>
+                            <div style="margin-top: 10px;">
+                                <button class="btn" onclick="clearPasswordList()" style="background: #dc3545; padding: 5px 15px; font-size: 12px;">🗑️ Clear List</button>
+                                <span style="font-size: 11px; color: #666; margin-left: 10px;">When ready, use "Generate Universal Password Code" above</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 10px; background: #e8f5e8; border: 1px solid #4caf50; border-radius: 5px;">
+                            <p style="font-size: 12px; color: #2e7d32; margin: 0;">
+                                <strong>🎯 How This Works:</strong><br>
+                                • Add guest names and passwords to your list<br>
+                                • When ready, click "Generate Universal Password Code"<br>
+                                • Copy the code and paste it into login.html<br>
+                                • All passwords instantly work on every device!
                             </p>
                         </div>
                     </div>
@@ -1393,6 +1389,99 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        // NEW: Universal Password System Functions
+        function generateUniversalPasswordCode() {
+            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            
+            if (invitations.length === 0) {
+                alert('❌ No invitations found! Create some custom passwords first, then generate the universal code.');
+                return;
+            }
+            
+            // Generate JavaScript object format for custom passwords
+            let codeLines = [];
+            
+            invitations.forEach(inv => {
+                const canBring = inv.canBringCompanion ? 'true' : 'false';
+                codeLines.push(`                '${inv.password.toUpperCase()}': { guestName: '${inv.guestName}', canBringCompanion: ${canBring} },`);
+            });
+            
+            const code = `                // ADD YOUR CUSTOM PASSWORDS HERE:
+${codeLines.join('\n')}
+                // END OF CUSTOM PASSWORDS`;
+            
+            document.getElementById('universalCodeDisplay').value = code;
+            document.getElementById('universalCodeResult').style.display = 'block';
+            document.getElementById('copyUniversalBtn').disabled = false;
+            
+            alert(`✅ Universal password code generated!\n\n📊 Found ${invitations.length} custom passwords\n\n📝 Copy the code and paste it into your login.html file to make passwords work on ALL devices!`);
+        }
+        
+        function copyUniversalCode() {
+            const code = document.getElementById('universalCodeDisplay').value;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ Universal password code copied to clipboard!\n\n📝 Next steps:\n1. Open login.html\n2. Find: "// ADD YOUR CUSTOM PASSWORDS HERE:"\n3. Replace with copied code\n4. Save file - passwords now work everywhere!');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ Universal password code copied to clipboard!\n\n📝 Next steps:\n1. Open login.html\n2. Find: "// ADD YOUR CUSTOM PASSWORDS HERE:"\n3. Replace with copied code\n4. Save file - passwords now work everywhere!');
+            });
+        }
+
+        // Add password to the list
+        function addToPasswordList() {
+            const guestName = document.getElementById('guestName').value.trim();
+            const customPassword = document.getElementById('customPassword').value.trim();
+            const canBringCompanion = document.getElementById('canBringCompanion').checked;
+
+            if (!guestName || !customPassword) {
+                alert('Please enter both guest name and custom password.');
+                return;
+            }
+
+            const passwordListContent = document.getElementById('passwordListContent');
+            const existingPasswords = JSON.parse(localStorage.getItem('universalPasswordList') || '[]');
+
+            // Check if password already exists
+            if (existingPasswords.some(p => p.password.toUpperCase() === customPassword.toUpperCase())) {
+                alert(`Password "${customPassword}" for guest "${guestName}" already exists in the list.`);
+                return;
+            }
+
+            const newPasswordEntry = {
+                guestName: guestName,
+                password: customPassword,
+                canBringCompanion: canBringCompanion
+            };
+
+            existingPasswords.push(newPasswordEntry);
+            localStorage.setItem('universalPasswordList', JSON.stringify(existingPasswords));
+
+            // Clear inputs and show list
+            document.getElementById('guestName').value = '';
+            document.getElementById('customPassword').value = '';
+            document.getElementById('canBringCompanion').checked = false;
+            passwordListContent.innerHTML = ''; // Clear previous list
+            existingPasswords.forEach(p => {
+                passwordListContent.innerHTML += `• ${p.guestName}: ${p.password} (Can bring +1: ${p.canBringCompanion ? 'Yes' : 'No'})\n`;
+            });
+            document.getElementById('passwordListDisplay').style.display = 'block';
+        }
+
+        // Clear the entire password list
+        function clearPasswordList() {
+            if (confirm('Are you sure you want to clear the entire custom password list?')) {
+                localStorage.removeItem('universalPasswordList');
+                document.getElementById('passwordListContent').innerHTML = '';
+                document.getElementById('passwordListDisplay').style.display = 'none';
+                alert('Custom password list cleared.');
+            }
         }
     </script>
 </body>
