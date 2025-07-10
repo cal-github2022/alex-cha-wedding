@@ -11,7 +11,7 @@ body {
     overflow-x: hidden;
     position: relative;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Fallback background */
+    background: #f5f5f5; /* Neutral fallback that won't interfere */
 }
 
 /* Background Slideshow */
@@ -21,7 +21,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -2;
+    z-index: -1; /* Higher than body background */
 }
 
 .slide {
@@ -37,25 +37,42 @@ body {
     transition: opacity 3s ease-in-out;
 }
 
+/* Ensure first slide is visible by default */
+.slide:first-child {
+    opacity: 1;
+}
+
 .slide.active {
     opacity: 1;
 }
 
 /* Beautiful gradient backgrounds that always work */
-/* Original working wedding background images */
+/* Original working wedding background images with fallbacks */
 .slide:nth-child(1) {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                      url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&h=1080&fit=crop&crop=center');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&h=1080&fit=crop&crop=center'),
+                url('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080'),
+                linear-gradient(135deg, #f5f5dc 0%, #deb887 100%); /* Elegant beige fallback */
+    background-size: cover, cover, cover, cover;
+    background-position: center, center, center, center;
 }
 
 .slide:nth-child(2) {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                      url('https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=1920&h=1080&fit=crop&crop=center');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=1920&h=1080&fit=crop&crop=center'),
+                url('https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080'),
+                linear-gradient(135deg, #faf0e6 0%, #dda0dd 100%); /* Soft pink fallback */
+    background-size: cover, cover, cover, cover;
+    background-position: center, center, center, center;
 }
 
 .slide:nth-child(3) {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                      url('https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1920&h=1080&fit=crop&crop=center');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1920&h=1080&fit=crop&crop=center'),
+                url('https://images.unsplash.com/photo-1606216794074-735e91aa2c92?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080'),
+                linear-gradient(135deg, #f0f8ff 0%, #e6e6fa 100%); /* Soft lavender fallback */
+    background-size: cover, cover, cover, cover;
+    background-position: center, center, center, center;
 }
 
 .overlay {
