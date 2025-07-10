@@ -247,36 +247,6 @@
     </div>
 
     <script>
-        // Get password from localStorage or use default
-        function getCorrectPassword() {
-            return localStorage.getItem('weddingPassword') || "alexcha2024";
-        }
-        
-        // SECURE PASSWORD SYSTEM - Only admin-generated passwords work
-        function getCentralizedPasswords() {
-            return {
-                // Only admin master password for emergency access
-                'ALEXCHA2024': { guestName: 'Admin Access', canBringCompanion: true }
-            };
-        }
-        
-        // ⭐ ADMIN-GENERATED CUSTOM PASSWORDS (Updated by admin panel)
-        // This section is automatically updated when you create custom passwords in admin panel
-        function getAdminGeneratedPasswords() {
-            return {
-                // Custom passwords will be added here automatically by admin panel
-                // Format: 'PASSWORD': { guestName: 'Guest Name', canBringCompanion: true/false }
-                
-                // PLACEHOLDER EXAMPLES (replace these with your actual custom passwords):
-                // 'JohnSmith123': { guestName: 'John Smith', canBringCompanion: true },
-                // 'SarahJohnson456': { guestName: 'Sarah Johnson', canBringCompanion: false },
-                // 'UncleJoe789': { guestName: 'Uncle Joe', canBringCompanion: true },
-                
-                // ADD YOUR CUSTOM PASSWORDS HERE:
-                // Copy from admin panel and paste here to make them work on all devices
-            };
-        }
-        
         function checkPassword(event) {
             event.preventDefault();
             
@@ -286,45 +256,32 @@
             
             console.log('=== LOGIN DEBUG ===');
             console.log('Entered password:', password);
-            console.log('User agent:', navigator.userAgent);
-            console.log('Is mobile:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
             
             // STEP 1: Check admin master password first
-            const centralizedPasswords = getCentralizedPasswords();
-            if (centralizedPasswords[passwordUpper]) {
-                const guestInfo = centralizedPasswords[passwordUpper];
-                console.log('Admin password found:', guestInfo);
-                grantAccess(guestInfo.guestName, password.toUpperCase(), guestInfo.canBringCompanion);
+            if (passwordUpper === 'ALEXCHA2024') {
+                console.log('Admin password found');
+                grantAccess('Admin Access', passwordUpper, true);
                 return;
             }
             
-            // STEP 2: Check admin-generated custom passwords (work on ALL devices)
-            const adminPasswords = getAdminGeneratedPasswords();
-            if (adminPasswords[passwordUpper]) {
-                const guestInfo = adminPasswords[passwordUpper];
-                console.log('Admin-generated password found:', guestInfo);
-                grantAccess(guestInfo.guestName, password.toUpperCase(), guestInfo.canBringCompanion);
-                return;
-            }
-            
-            // STEP 3: Check localStorage invitations (device-specific)
+            // STEP 2: Check localStorage invitations (created in admin panel)
             const storedInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
             const matchingInvitation = storedInvitations.find(inv => 
                 inv.password.toUpperCase() === passwordUpper
             );
             
             if (matchingInvitation) {
-                console.log('Stored invitation found:', matchingInvitation);
-                grantAccess(matchingInvitation.guestName, password.toUpperCase(), matchingInvitation.canBringCompanion);
+                console.log('Custom invitation found:', matchingInvitation);
+                grantAccess(matchingInvitation.guestName, passwordUpper, matchingInvitation.canBringCompanion);
                 return;
             }
             
-            // STEP 4: All authentication failed
-            console.log('All authentication methods failed');
+            // STEP 3: All authentication failed
+            console.log('Authentication failed');
             showAuthenticationError();
         }
         
-        // Simplified access granting function
+        // Grant access and redirect to main site
         function grantAccess(guestName, invitationPassword, canBringCompanion = true) {
             console.log('Granting access to:', guestName);
             
@@ -334,13 +291,13 @@
             sessionStorage.setItem('invitationPassword', invitationPassword);
             sessionStorage.setItem('autoStartMusic', 'true');
             
-            // Add a small delay to ensure session storage is set
+            // Redirect to main site
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 100);
         }
         
-        // Enhanced error display
+        // Show error message
         function showAuthenticationError() {
             const passwordInput = document.getElementById('password');
             const errorMessage = document.getElementById('errorMessage');
@@ -365,18 +322,7 @@
             }, 3000);
         }
         
-        // Remove smart pattern matching - security risk
-        function trySmartPasswordMatching(password) {
-            console.log('Smart pattern matching disabled for security');
-            return false;
-        }
-        
-        // Remove sync functionality - security risk
-        function syncInvitations() {
-            alert('❌ Feature Disabled\n\n🔒 For security reasons, this feature has been disabled.\n\n📧 Contact Alex & Cha if you need an invitation password.');
-        }
-        
-        // Secure clear sync data
+        // Clear session data (for debug panel)
         function clearSyncData() {
             const confirmMsg = `⚠️ Clear Session Data?\n\n` +
                 `This will clear your current login session.\n` +
@@ -389,50 +335,52 @@
                 sessionStorage.removeItem('invitedGuest');
                 sessionStorage.removeItem('canBringCompanion');
                 sessionStorage.removeItem('invitationPassword');
-                sessionStorage.removeItem('smartMatched');
                 
                 alert('✅ Session data cleared!\n\n🔒 Please enter your invitation password to access the website.');
-                
-                // Update debug info display
-                updateDebugInfo();
-                
                 console.log('Session data cleared');
             }
         }
         
-        // Secure debug info display
-        function updateDebugInfo() {
+        // Debug panel toggle
+        function toggleDebugPanel() {
+            const panel = document.getElementById('debugPanel');
             const info = document.getElementById('debugInfo');
-            if (info) {
-                const adminPasswords = getAdminGeneratedPasswords();
+            
+            if (panel.style.display === 'none') {
+                // Show debug panel with system info
+                const storedInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
                 
                 info.innerHTML = `
-                    <strong>🔒 Security Information:</strong><br>
-                    <span style="color: #f44336; font-weight: bold;">
+                    <strong>🔒 Wedding Website Security Status:</strong><br>
+                    <span style="color: #f44336; font-weight: bold; font-size: 13px;">
                     This is a private wedding invitation website.<br>
                     Only invited guests with valid passwords can access.<br>
-                    </span><br>
+                    </span><br><br>
                     
-                    <strong>⭐ Custom Invitation Passwords:</strong><br>
-                    <span style="color: #ff9800; font-weight: bold;">
-                    ${Object.keys(adminPasswords).length > 0 ? 
-                        `${Object.keys(adminPasswords).length} custom invitation passwords are set` : 
-                        'No custom passwords set - contact the couple for access'}<br>
+                    <strong>⭐ Custom Invitation Status:</strong><br>
+                    <span style="color: #ff9800; font-weight: bold; font-size: 13px;">
+                    ${storedInvitations.length > 0 ? 
+                        `${storedInvitations.length} custom invitation passwords are set.<br>Contact Alex & Cha for your personal password.` : 
+                        'No custom passwords set.<br>Contact Alex & Cha for access.'}<br>
                     </span><br>
                     
                     <strong>System Info:</strong><br>
-                    User Agent: ${navigator.userAgent.substring(0, 50)}...<br>
+                    User Agent: ${navigator.userAgent}<br>
                     Is Mobile: ${/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)}<br>
-                    LocalStorage: ${typeof(Storage) !== "undefined" ? '✅ Available' : '❌ Not Available'}<br>
-                    SessionStorage: ${typeof(sessionStorage) !== "undefined" ? '✅ Available' : '❌ Not Available'}<br><br>
+                    LocalStorage Available: ${typeof(Storage) !== "undefined"}<br>
+                    SessionStorage Available: ${typeof(sessionStorage) !== "undefined"}<br><br>
                     
                     <strong>🎯 How to Get Access:</strong><br>
                     <span style="color: #2196f3; font-weight: bold;">
                     1. 📧 Contact Alex & Cha for your invitation password<br>
                     2. 🔑 Use the password they provide you<br>
                     3. 🔒 Only invited guests can access this private website<br>
+                    4. ❌ No universal passwords - secure by design<br>
                     </span>
                 `;
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
             }
         }
         
@@ -474,48 +422,6 @@
             }
             setTimeout(() => { if (tapCount < 5) tapCount = 0; }, 2000);
         });
-        
-        function toggleDebugPanel() {
-            const panel = document.getElementById('debugPanel');
-            const info = document.getElementById('debugInfo');
-            
-            if (panel.style.display === 'none') {
-                // Show debug panel with system info
-                const adminPasswords = getAdminGeneratedPasswords();
-                
-                info.innerHTML = `
-                    <strong>🔒 Wedding Website Security Status:</strong><br>
-                    <span style="color: #f44336; font-weight: bold; font-size: 13px;">
-                    This is a private wedding invitation website.<br>
-                    Only invited guests with valid passwords can access.<br>
-                    </span><br><br>
-                    
-                    <strong>⭐ Custom Invitation Status:</strong><br>
-                    <span style="color: #ff9800; font-weight: bold; font-size: 13px;">
-                    ${Object.keys(adminPasswords).length > 0 ? 
-                        `${Object.keys(adminPasswords).length} custom invitation passwords are set.<br>Contact Alex & Cha for your personal password.` : 
-                        'No custom passwords set.<br>Contact Alex & Cha for access.'}<br>
-                    </span><br>
-                    
-                    <strong>System Info:</strong><br>
-                    User Agent: ${navigator.userAgent}<br>
-                    Is Mobile: ${/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)}<br>
-                    LocalStorage Available: ${typeof(Storage) !== "undefined"}<br>
-                    SessionStorage Available: ${typeof(sessionStorage) !== "undefined"}<br><br>
-                    
-                    <strong>🎯 How to Get Access:</strong><br>
-                    <span style="color: #2196f3; font-weight: bold;">
-                    1. 📧 Contact Alex & Cha for your invitation password<br>
-                    2. 🔑 Use the password they provide you<br>
-                    3. 🔒 Only invited guests can access this private website<br>
-                    4. ❌ No universal passwords - secure by design<br>
-                    </span>
-                `;
-                panel.style.display = 'block';
-            } else {
-                panel.style.display = 'none';
-            }
-        }
     </script>
 </body>
 </html> 
