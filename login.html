@@ -264,15 +264,19 @@
                 return;
             }
             
-            // STEP 2: Check localStorage invitations (created in admin panel)
-            const storedInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-            const matchingInvitation = storedInvitations.find(inv => 
-                inv.password.toUpperCase() === passwordUpper
-            );
+            // STEP 2: Check localStorage passwords (created in admin panel)
+            const weddingPasswords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
             
-            if (matchingInvitation) {
-                console.log('Custom invitation found:', matchingInvitation);
-                grantAccess(matchingInvitation.guestName, passwordUpper, matchingInvitation.canBringCompanion);
+            if (weddingPasswords[passwordUpper]) {
+                const passwordData = weddingPasswords[passwordUpper];
+                console.log('Custom password found:', passwordData);
+                
+                // Mark password as used
+                passwordData.used = true;
+                passwordData.lastUsed = new Date().toISOString();
+                localStorage.setItem('weddingPasswords', JSON.stringify(weddingPasswords));
+                
+                grantAccess(passwordData.guestName, passwordUpper, passwordData.canBringCompanion);
                 return;
             }
             
@@ -348,7 +352,7 @@
             
             if (panel.style.display === 'none') {
                 // Show debug panel with system info
-                const storedInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+                const weddingPasswords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
                 
                 info.innerHTML = `
                     <strong>🔒 Wedding Website Security Status:</strong><br>
@@ -359,8 +363,8 @@
                     
                     <strong>⭐ Custom Invitation Status:</strong><br>
                     <span style="color: #ff9800; font-weight: bold; font-size: 13px;">
-                    ${storedInvitations.length > 0 ? 
-                        `${storedInvitations.length} custom invitation passwords are set.<br>Contact Alex & Cha for your personal password.` : 
+                    ${Object.keys(weddingPasswords).length > 0 ? 
+                        `${Object.keys(weddingPasswords).length} custom invitation passwords are set.<br>Contact Alex & Cha for your personal password.` : 
                         'No custom passwords set.<br>Contact Alex & Cha for access.'}<br>
                     </span><br>
                     

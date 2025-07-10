@@ -200,34 +200,96 @@
             background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
         }
 
-        .password-section {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+        .form-group {
+            margin: 15px 0;
         }
 
-        .password-display {
-            background: #f8f9fa;
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
             padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-row .form-group {
+            flex: 1;
         }
 
         .hidden {
             display: none;
         }
 
-        .export-section {
-            margin-top: 20px;
+        .password-list {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        .export-buttons {
+        .password-item {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .password-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
         }
 
         @media (max-width: 768px) {
@@ -240,8 +302,8 @@
                 margin: 10px 0;
             }
             
-            .attendees-table {
-                font-size: 14px;
+            .form-row {
+                flex-direction: column;
             }
         }
     </style>
@@ -288,180 +350,79 @@
                         <div class="stat-label">Not Coming</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="withCompanions">0</div>
-                        <div class="stat-label">With Companions</div>
+                        <div class="stat-number" id="activePasswords">0</div>
+                        <div class="stat-label">Active Passwords</div>
                     </div>
                 </div>
 
-                <!-- Invitation Management -->
+                <!-- Create Individual Password -->
                 <div class="section">
-                    <h2>🎫 Invitation Management</h2>
+                    <h2>🎫 Create Individual Invitation</h2>
+                    <div class="alert alert-success">
+                        <strong>✅ Instant Access:</strong> Passwords created here work immediately - no manual steps required!
+                    </div>
                     
-                    <!-- Cloud Sync Feature -->
-                    <div style="padding: 15px; background: #f8d7da; border-radius: 10px; border: 1px solid #f5c6cb; margin-bottom: 20px;">
-                        <h3 style="color: #721c24; margin: 0 0 10px 0;">🚫 Legacy Device Sync (Removed)</h3>
-                        <p style="margin: 0 0 15px 0; color: #721c24; font-size: 14px;">
-                            <strong>⚠️ This feature has been removed:</strong> Device-specific password storage caused too many cross-device issues. 
-                            All custom passwords now use the Universal Password System below for 100% reliability across all devices.
-                        </p>
-                        
-                        <div style="padding: 10px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 5px;">
-                            <p style="font-size: 12px; color: #e65100; margin: 0;">
-                                <strong>🎯 What Changed:</strong><br>
-                                ❌ Removed: Device-specific localStorage passwords<br>
-                                ❌ Removed: Sync codes and mobile syncing<br>
-                                ❌ Removed: CSV/JSON import/export for invitations<br>
-                                ✅ Added: Universal Password System (works everywhere)<br>
-                                ✅ Added: Built-in universal passwords (25+ passwords)<br>
-                                ✅ Added: One-time setup for custom passwords
-                            </p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="guestName">Guest Name</label>
+                            <input type="text" id="guestName" placeholder="e.g., John Smith">
                         </div>
-                        
-                        <!-- Universal Password System -->
-                        <div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 10px; border: 2px solid #4caf50;">
-                            <h3 style="color: #2e7d32; margin: 0 0 10px 0;">🌟 Universal Password System</h3>
-                            <p style="margin: 0 0 15px 0; color: #333; font-size: 14px;">
-                                <strong>✅ The Only Method You Need:</strong> Create custom passwords that work on ALL devices instantly!
-                                No localStorage, no syncing, no device-specific issues. Pure JavaScript solution.
-                            </p>
-                            
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 15px;">
-                                <button class="btn" onclick="generateUniversalPasswordCode()" style="background: #4caf50; font-weight: bold;">
-                                    🔑 Generate Universal Password Code
-                                </button>
-                                <button class="btn" onclick="copyUniversalCode()" style="background: #2196f3;" id="copyUniversalBtn" disabled>
-                                    📋 Copy Code for login.html
-                                </button>
-                            </div>
-                            
-                            <div id="universalCodeResult" style="display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 5px; border: 1px solid #ddd;">
-                                <h4 style="margin: 0 0 10px 0; color: #333;">📝 Simple Instructions:</h4>
-                                <ol style="margin: 0 0 15px 0; padding-left: 20px; color: #333; font-size: 13px;">
-                                    <li>Copy the code below</li>
-                                    <li>Open your <strong>login.html</strong> file</li>
-                                    <li>Find the line: <code>// ADD YOUR CUSTOM PASSWORDS HERE:</code></li>
-                                    <li>Replace the placeholder with the code below</li>
-                                    <li>Save login.html - now your passwords work on ALL devices!</li>
-                                </ol>
-                                <div style="margin: 10px 0;">
-                                    <strong>Code to paste in login.html:</strong>
-                                    <textarea id="universalCodeDisplay" readonly style="width: 100%; height: 120px; font-family: monospace; font-size: 11px; padding: 5px; resize: vertical; background: #f8f8f8;"></textarea>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-top: 15px; padding: 10px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 5px;">
-                                <p style="font-size: 12px; color: #e65100; margin: 0;">
-                                    <strong>🎯 Why Universal System is Better:</strong><br>
-                                    ✅ Works on ALL devices instantly (no syncing needed)<br>
-                                    ✅ No localStorage dependency (more reliable)<br>
-                                    ✅ One-time setup, works forever<br>
-                                    ✅ Guests don't need any special steps<br>
-                                    ✅ No cross-device compatibility issues
-                                </p>
-                            </div>
+                        <div class="form-group">
+                            <label for="customPassword">Password</label>
+                            <input type="text" id="customPassword" placeholder="e.g., JohnSmith">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn" onclick="suggestPassword()">💡 Suggest</button>
                         </div>
                     </div>
                     
-                    <div style="padding: 20px; background: #fff3cd; border-radius: 10px; border: 1px solid #ffeaa7;">
-                        <h3>🎯 Create Custom Password List (Recommended)</h3>
-                        <p><strong>💡 Best Practice: Create a list of custom passwords, then use the Universal Password System above to make them work everywhere!</strong></p>
-                        
-                        <!-- Guest Name -->
-                        <div style="display: flex; gap: 10px; align-items: center; margin: 15px 0;">
-                            <input type="text" id="guestName" placeholder="Guest name (e.g., John Smith)" style="flex: 2; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
-                            <input type="text" id="customPassword" placeholder="Custom password (e.g., JohnSmith)" style="flex: 1.5; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-weight: bold;">
-                            <label style="display: flex; align-items: center; gap: 5px; font-size: 14px; flex: 1;">
-                                <input type="checkbox" id="canBringCompanion" style="margin:0;"> Can bring +1
-                            </label>
-                        </div>
-                        
-                        <!-- Generate Button -->
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <button class="btn" onclick="addToPasswordList()" style="background: #4caf50; padding: 10px 20px; font-weight: bold;">
-                                ➕ Add to Password List
-                            </button>
-                            <button type="button" onclick="suggestPassword()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer;">💡 Suggest Password</button>
-                            <span style="font-size: 12px; color: #856404;">⚡ No localStorage - just builds your universal code</span>
-                        </div>
-                        
-                        <!-- Password List Display -->
-                        <div id="passwordListDisplay" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd; display: none;">
-                            <h4 style="margin: 0 0 10px 0; color: #333;">📋 Your Custom Password List:</h4>
-                            <div id="passwordListContent" style="font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;"></div>
-                            <div style="margin-top: 10px;">
-                                <button class="btn" onclick="clearPasswordList()" style="background: #dc3545; padding: 5px 15px; font-size: 12px;">🗑️ Clear List</button>
-                                <span style="font-size: 11px; color: #666; margin-left: 10px;">When ready, use "Generate Universal Password Code" above</span>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-top: 15px; padding: 10px; background: #e8f5e8; border: 1px solid #4caf50; border-radius: 5px;">
-                            <p style="font-size: 12px; color: #2e7d32; margin: 0;">
-                                <strong>🎯 How This Works:</strong><br>
-                                • Add guest names and passwords to your list<br>
-                                • When ready, click "Generate Universal Password Code"<br>
-                                • Copy the code and paste it into login.html<br>
-                                • All passwords instantly work on every device!
-                            </p>
-                        </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="canBringCompanion">
+                        <label for="canBringCompanion">Guest can bring a +1</label>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="createSinglePassword()">➕ Create Password</button>
+                </div>
+
+                <!-- Bulk Creation -->
+                <div class="section">
+                    <h2>⚡ Bulk Password Creation</h2>
+                    <div class="alert alert-warning">
+                        <strong>🚀 Fast Setup:</strong> Enter multiple guest names and we'll auto-generate passwords for all of them!
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bulkGuestNames">Guest Names (one per line)</label>
+                        <textarea id="bulkGuestNames" placeholder="John Smith&#10;Sarah Johnson&#10;Mike Wilson&#10;Uncle Bob&#10;Aunt Mary"></textarea>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="bulkCanBringCompanion">
+                        <label for="bulkCanBringCompanion">All guests can bring +1</label>
+                    </div>
+                    
+                    <button class="btn" onclick="createBulkPasswords()" style="background: #ff9800;">🚀 Create All Passwords</button>
+                </div>
+
+                <!-- Active Passwords -->
+                <div class="section">
+                    <h2>🔑 Active Passwords</h2>
+                    <div id="passwordsList">
+                        <p>Loading passwords...</p>
                     </div>
                 </div>
 
-                <!-- Bulk Invitation Creation -->
+                <!-- Guest Management -->
                 <div class="section">
-                    <h2>⚡ Quick Bulk Creation</h2>
-                    <div style="padding: 20px; background: #fff3cd; border-radius: 10px; border: 1px solid #ffeaa7;">
-                        <h3>Create Multiple Invitations Fast</h3>
-                        <p><strong>Enter guest names (one per line) and we'll auto-generate passwords:</strong></p>
-                        
-                        <div style="margin: 15px 0;">
-                            <textarea id="bulkGuestNames" placeholder="Enter guest names, one per line:&#10;John Smith&#10;Sarah Johnson&#10;Mike Wilson&#10;Uncle Bob&#10;Aunt Mary" 
-                                      style="width: 100%; height: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit; resize: vertical;"></textarea>
-                        </div>
-                        
-                        <div style="display: flex; gap: 10px; align-items: center; margin: 15px 0;">
-                            <label style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
-                                <input type="checkbox" id="bulkCanBringCompanion" style="margin:0;"> All guests can bring +1
-                            </label>
-                            <button class="btn" onclick="createBulkInvitations()" style="background: #ff9800; padding: 10px 20px; font-weight: bold;">
-                                🚀 Create All Invitations
-                            </button>
-                        </div>
-                        
-                        <div style="margin-top: 15px; padding: 10px; background: #e8f5e8; border: 1px solid #4caf50; border-radius: 5px;">
-                            <p style="font-size: 12px; color: #2e7d32; margin: 0;">
-                                <strong>🎯 Smart Features:</strong><br>
-                                • Auto-generates memorable passwords based on names<br>
-                                • Checks for duplicates automatically<br>
-                                • Creates custom passwords like "JohnSmith", "Sarah2024", etc.<br>
-                                • Shows summary of all created passwords at the end
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Active Invitations -->
-                <div class="section">
-                    <h2>📋 Guest Management</h2>
-                    <p style="color: #666; margin-bottom: 20px;">Click on any guest name to view their RSVP details and manage their response.</p>
-                    
-                    <!-- Debug Section -->
-                    <div style="background: #f0f8ff; border: 1px solid #add8e6; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                        <h4 style="margin-bottom: 10px;">🔍 Debug Info</h4>
-                        <button class="btn" onclick="showDebugInfo()" style="background: #4169e1;">Show Raw Data</button>
-                        <div id="debugOutput" style="margin-top: 10px; display: none; background: white; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;"></div>
+                    <h2>📋 RSVP Responses</h2>
+                    <div id="attendeesList">
+                        <p>Loading RSVPs...</p>
                     </div>
                     
-                    <div class="export-section">
-                        <h3>Export Data</h3>
-                        <div class="export-buttons">
-                            <button class="btn" onclick="exportToCSV()">Export to CSV</button>
-                            <button class="btn" onclick="exportToJSON()">Export to JSON</button>
-                            <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
-                        </div>
-                    </div>
-                    
-                    <div id="invitationsList">
-                        <p>Loading invitations...</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="exportToCSV()">Export CSV</button>
+                        <button class="btn" onclick="exportToJSON()">Export JSON</button>
+                        <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
                     </div>
                 </div>
             </div>
@@ -490,12 +451,9 @@
 
         // Start auto-refresh timer
         function startAutoRefresh() {
-            // Clear any existing timer
             if (autoRefreshTimer) {
                 clearInterval(autoRefreshTimer);
             }
-            
-            // Set up auto-refresh every 1 minute (60000ms)
             autoRefreshTimer = setInterval(() => {
                 console.log('Auto-refreshing admin data...');
                 loadAdminData();
@@ -512,645 +470,400 @@
 
         // Load admin data
         function loadAdminData() {
-            loadInvitationsData();
+            loadPasswordsList();
+            loadAttendeesList();
             updateStatistics();
-            updateLastRefreshTime();
         }
 
-        // Enhanced load attendees data with better error handling
-        function loadAttendeesData() {
-            try {
-                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-                const attendeesList = document.getElementById('attendeesList');
-                
-                if (attendees.length === 0) {
-                    attendeesList.innerHTML = '<p>No RSVPs found.</p>';
-                    return;
-                }
-
-                let tableHTML = `
-                    <table class="attendees-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>City</th>
-                                <th>Relationship</th>
-                                <th>Companion</th>
-                                <th>RSVP Status</th>
-                                <th>Details</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                attendees.forEach((attendee, index) => {
-                    const statusColor = attendee.rsvpType === 'attending' ? '#4caf50' : '#f44336';
-                    const statusText = attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming';
-                    const details = attendee.rsvpType === 'attending' ? 
-                        (attendee.dietary || 'No dietary restrictions') : 
-                        (attendee.reason || 'No reason provided');
-                    
-                    tableHTML += `
-                        <tr>
-                            <td>${attendee.name}</td>
-                            <td>${attendee.city || 'Not specified'}</td>
-                            <td>${attendee.relationship || 'Not specified'}</td>
-                            <td>${attendee.companionName || 'None'}</td>
-                            <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
-                            <td>${details}</td>
-                            <td>
-                                <button class="btn btn-danger" onclick="deleteAttendee(${index})">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                tableHTML += '</tbody></table>';
-                attendeesList.innerHTML = tableHTML;
-                
-                console.log(`Loaded ${attendees.length} attendees`);
-            } catch (error) {
-                console.error('Error loading attendees data:', error);
-                document.getElementById('attendeesList').innerHTML = '<p>Error loading data. Please refresh.</p>';
-            }
-        }
-
-        // Update statistics
-        function updateStatistics() {
-            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-            
-            document.getElementById('totalAttendees').textContent = attendees.length;
-            document.getElementById('confirmedAttendees').textContent = attendees.filter(a => a.rsvpType === 'attending').length;
-            document.getElementById('notComingAttendees').textContent = attendees.filter(a => a.rsvpType === 'not-attending').length;
-            document.getElementById('withCompanions').textContent = attendees.filter(a => a.companionName && a.companionName.trim() !== '').length;
-        }
-
-        // Delete attendee
-        function deleteAttendee(index) {
-            if (confirm('Are you sure you want to delete this attendee?')) {
-                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-                attendees.splice(index, 1);
-                localStorage.setItem('weddingAttendees', JSON.stringify(attendees));
-                loadAttendeesData();
-                updateStatistics();
-            }
-        }
-
-        // Generate unique invitation password
-        function generateInvitation() {
+        // Create single password
+        function createSinglePassword() {
             const guestName = document.getElementById('guestName').value.trim();
+            const password = document.getElementById('customPassword').value.trim();
             const canBringCompanion = document.getElementById('canBringCompanion').checked;
-            const passwordMethod = document.querySelector('input[name="passwordMethod"]:checked').value;
-            let password = '';
 
-            if (!guestName) {
-                alert('Please enter a guest name.');
+            if (!guestName || !password) {
+                alert('Please enter both guest name and password.');
                 return;
             }
 
-            // Get existing invitations to check for duplicates
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            // Get existing passwords
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
             
-            // Check if guest already has invitation
-            const existingInvitation = invitations.find(inv => inv.guestName.toLowerCase() === guestName.toLowerCase());
-            if (existingInvitation) {
-                alert(`Invitation already exists for ${guestName}. Password: ${existingInvitation.password}`);
+            // Check if password already exists
+            if (passwords[password.toUpperCase()]) {
+                alert('This password already exists. Please choose a different one.');
                 return;
             }
 
-            if (passwordMethod === 'custom') {
-                password = document.getElementById('customPassword').value.trim();
-                if (!password) {
-                    alert('Please enter a custom password.');
-                    return;
-                }
-                
-                // Enhanced validation for custom password
-                if (password.length < 2) {
-                    alert('Password must be at least 2 characters long.');
-                    return;
-                }
-                
-                if (password.includes(' ')) {
-                    alert('Password cannot contain spaces. Use underscores or dashes instead.');
-                    return;
-                }
-                
-                // Check for duplicate passwords (case-insensitive)
-                const existingPassword = invitations.find(inv => inv.password.toLowerCase() === password.toLowerCase());
-                if (existingPassword) {
-                    alert(`Password "${password}" is already used by ${existingPassword.guestName}. Please choose a different password.`);
-                    return;
-                }
-                
-                // Check against master passwords
-                const masterPasswords = ['ALEXCHA2024', 'TEST123', 'ADMIN'];
-                if (masterPasswords.some(master => master.toLowerCase() === password.toLowerCase())) {
-                    alert(`"${password}" is reserved as a master password. Please choose a different password.`);
-                    return;
-                }
-                
-            } else if (passwordMethod === 'auto') {
-                // Get the auto-generated password from the input field
-                password = document.getElementById('autoGeneratedPassword').value.trim();
-                
-                // If no password shown, generate a new one
-                if (!password) {
-                    password = generateUniquePassword();
-                }
-                
-                // Ensure the auto-generated password is also unique (very unlikely but safety check)
-                let attempts = 0;
-                while (invitations.some(inv => inv.password === password) && attempts < 10) {
-                    password = generateUniquePassword();
-                    attempts++;
-                }
-                
-                if (attempts >= 10) {
-                    alert('Unable to generate a unique password. Please try using a custom password instead.');
-                    return;
-                }
-            }
-
-            // Add new invitation
-            const newInvitation = {
-                id: Date.now(),
+            // Add new password
+            passwords[password.toUpperCase()] = {
                 guestName: guestName,
-                password: password,
-                created: new Date().toISOString(),
-                used: false,
                 canBringCompanion: canBringCompanion,
-                passwordMethod: passwordMethod // Track how the password was created
+                created: new Date().toISOString(),
+                used: false
             };
 
-            invitations.push(newInvitation);
-            localStorage.setItem('invitations', JSON.stringify(invitations));
+            // Save to localStorage
+            localStorage.setItem('weddingPasswords', JSON.stringify(passwords));
 
-            // Clear inputs
+            // Clear form
             document.getElementById('guestName').value = '';
-            document.getElementById('canBringCompanion').checked = false;
             document.getElementById('customPassword').value = '';
-            document.getElementById('autoGeneratedPassword').value = '';
-            
-            // Reset to custom password method as default
-            document.querySelector('input[name="passwordMethod"][value="custom"]').checked = true;
-            togglePasswordMethod();
+            document.getElementById('canBringCompanion').checked = false;
 
-            // Show success message with password
-            const methodText = passwordMethod === 'custom' ? 'Custom' : 'Auto-generated';
-            alert(`✅ Invitation created for ${guestName}!\n\n🔑 Password: ${password}\n📝 Method: ${methodText}\n\n📤 Share this password with ${guestName} to access the wedding website.`);
+            // Refresh display
+            loadPasswordsList();
+            updateStatistics();
 
-            // Reload invitations list
-            loadInvitationsData();
+            alert(`✅ Password created successfully!\n\nGuest: ${guestName}\nPassword: ${password}\n\nThis password is now active and ready to use!`);
         }
 
-        // Generate unique password
-        function generateUniquePassword() {
-            // Use only easily distinguishable characters (no 0, O, 1, I, etc.)
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let password = '';
-            for (let i = 0; i < 6; i++) {
-                password += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return password;
-        }
-
-        // Toggle password method visibility
-        function togglePasswordMethod() {
-            const customRadio = document.querySelector('input[name="passwordMethod"][value="custom"]');
-            const autoRadio = document.querySelector('input[name="passwordMethod"][value="auto"]');
-            const customSection = document.getElementById('customPasswordSection');
-            const autoSection = document.getElementById('autoPasswordSection');
-            const customPasswordInput = document.getElementById('customPassword');
-            const autoGeneratedPasswordInput = document.getElementById('autoGeneratedPassword');
-
-            if (customRadio.checked) {
-                // Show custom password section
-                customSection.style.display = 'block';
-                autoSection.style.display = 'none';
-                customPasswordInput.focus();
-            } else if (autoRadio.checked) {
-                // Show auto-generated password section
-                customSection.style.display = 'none';
-                autoSection.style.display = 'block';
-                // Generate new password if empty
-                if (!autoGeneratedPasswordInput.value) {
-                    autoGeneratedPasswordInput.value = generateUniquePassword();
-                }
-            }
-        }
-
-        // Suggest a password
+        // Suggest password based on guest name
         function suggestPassword() {
             const guestName = document.getElementById('guestName').value.trim();
             if (!guestName) {
                 alert('Please enter a guest name first.');
                 return;
             }
+
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            const existingPasswords = Object.keys(passwords).map(p => p.toLowerCase());
             
-            // Get existing invitations to avoid duplicates
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-            const existingPasswords = invitations.map(inv => inv.password.toLowerCase());
-            
-            // Create multiple suggestions
-            const suggestions = [];
-            const cleanName = guestName.replace(/[^a-zA-Z]/g, ''); // Remove non-alphabetic characters
+            // Generate smart password suggestions
             const nameParts = guestName.split(' ').filter(part => part.length > 0);
-            
-            // Suggestion 1: First name + last name
+            const suggestions = [];
+
             if (nameParts.length >= 2) {
-                const suggestion1 = nameParts[0] + nameParts[nameParts.length - 1];
-                if (!existingPasswords.includes(suggestion1.toLowerCase())) {
-                    suggestions.push(suggestion1);
+                // FirstLast (e.g., "JohnSmith")
+                const firstLast = nameParts[0] + nameParts[nameParts.length - 1];
+                if (!existingPasswords.includes(firstLast.toLowerCase())) {
+                    suggestions.push(firstLast);
+                }
+                
+                // First2024 (e.g., "John2024")
+                const first2024 = nameParts[0] + '2024';
+                if (!existingPasswords.includes(first2024.toLowerCase())) {
+                    suggestions.push(first2024);
                 }
             }
-            
-            // Suggestion 2: First name + 2024
+
             if (nameParts.length >= 1) {
-                const suggestion2 = nameParts[0] + '2024';
-                if (!existingPasswords.includes(suggestion2.toLowerCase())) {
-                    suggestions.push(suggestion2);
+                // FirstName (e.g., "John")
+                if (!existingPasswords.includes(nameParts[0].toLowerCase())) {
+                    suggestions.push(nameParts[0]);
                 }
             }
-            
-            // Suggestion 3: Clean name (no spaces)
-            if (cleanName.length >= 3 && cleanName.length <= 10) {
-                if (!existingPasswords.includes(cleanName.toLowerCase())) {
-                    suggestions.push(cleanName);
-                }
+
+            if (suggestions.length > 0) {
+                document.getElementById('customPassword').value = suggestions[0];
+            } else {
+                // Fallback to random
+                const randomPassword = 'Guest' + Math.floor(Math.random() * 9000 + 1000);
+                document.getElementById('customPassword').value = randomPassword;
             }
-            
-            // Suggestion 4: Initials + 2024
-            if (nameParts.length >= 2) {
-                const initials = nameParts.map(part => part[0]).join('').toUpperCase();
-                const suggestion4 = initials + '2024';
-                if (!existingPasswords.includes(suggestion4.toLowerCase())) {
-                    suggestions.push(suggestion4);
-                }
-            }
-            
-            // Suggestion 5: First name + last initial
-            if (nameParts.length >= 2) {
-                const suggestion5 = nameParts[0] + nameParts[nameParts.length - 1][0].toUpperCase();
-                if (!existingPasswords.includes(suggestion5.toLowerCase())) {
-                    suggestions.push(suggestion5);
-                }
-            }
-            
-            if (suggestions.length === 0) {
-                // Fallback to just the first name
-                const fallback = nameParts[0] || cleanName.substring(0, 6);
-                suggestions.push(fallback);
-            }
-            
-            // Use the best suggestion
-            const bestSuggestion = suggestions[0];
-            document.getElementById('customPassword').value = bestSuggestion;
-            
-            // Show all suggestions to the user
-            let suggestionText = `💡 Suggested password: ${bestSuggestion}`;
-            if (suggestions.length > 1) {
-                suggestionText += `\n\nOther suggestions:\n${suggestions.slice(1).map(s => `• ${s}`).join('\n')}`;
-            }
-            alert(suggestionText);
         }
 
-        // Regenerate auto-generated password
-        function regeneratePassword() {
-            document.getElementById('autoGeneratedPassword').value = generateUniquePassword();
-        }
-
-        // Load invitations data
-        function loadInvitationsData() {
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-            const invitationsList = document.getElementById('invitationsList');
+        // Create bulk passwords
+        function createBulkPasswords() {
+            const guestNamesInput = document.getElementById('bulkGuestNames').value.trim();
+            const canBringCompanion = document.getElementById('bulkCanBringCompanion').checked;
             
-            if (invitations.length === 0) {
-                invitationsList.innerHTML = '<p>No invitations generated yet.</p>';
+            if (!guestNamesInput) {
+                alert('Please enter guest names.');
                 return;
             }
 
-            let tableHTML = `
-                <table class="attendees-table">
-                    <thead>
-                        <tr>
-                            <th>Guest Name</th>
-                            <th>Invitation Password</th>
-                            <th>Created</th>
-                            <th>Status</th>
-                            <th>RSVP Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
+            const guestNames = guestNamesInput.split('\n').map(name => name.trim()).filter(name => name.length > 0);
+            
+            if (guestNames.length === 0) {
+                alert('Please enter valid guest names.');
+                return;
+            }
 
-            invitations.forEach((invitation, index) => {
-                const status = invitation.used ? 'Used' : 'Active';
-                const statusColor = invitation.used ? '#ff6b6b' : '#4caf50';
-                
-                // Find attendee data for this invitation BY INVITATION PASSWORD
-                const attendee = attendees.find(att => att.invitationPassword === invitation.password);
-                
-                let rsvpStatus = 'No Response';
-                let rsvpColor = '#999';
-                
-                if (attendee) {
-                    rsvpStatus = attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming';
-                    rsvpColor = attendee.rsvpType === 'attending' ? '#4caf50' : '#f44336';
-                } else if (invitation.used) {
-                    rsvpStatus = 'Submitted';
-                    rsvpColor = '#ff9800';
+            if (!confirm(`Create passwords for ${guestNames.length} guests?`)) {
+                return;
+            }
+
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            const existingPasswords = Object.keys(passwords).map(p => p.toLowerCase());
+            const results = [];
+            let successCount = 0;
+
+            for (const guestName of guestNames) {
+                // Generate smart password
+                const nameParts = guestName.split(' ').filter(part => part.length > 0);
+                let password = null;
+
+                // Try different patterns
+                const patterns = [
+                    nameParts.length >= 2 ? nameParts[0] + nameParts[nameParts.length - 1] : null,
+                    nameParts.length >= 1 ? nameParts[0] + '2024' : null,
+                    nameParts.length >= 1 ? nameParts[0] : null,
+                    'Guest' + Math.floor(Math.random() * 9000 + 1000)
+                ];
+
+                for (const pattern of patterns) {
+                    if (pattern && !existingPasswords.includes(pattern.toLowerCase())) {
+                        password = pattern;
+                        break;
+                    }
                 }
-                
-                tableHTML += `
-                    <tr onclick="showGuestDetails('${invitation.guestName}', ${index})" style="cursor: pointer;">
-                        <td>${invitation.guestName}</td>
-                        <td style="font-family: monospace; font-weight: bold;">${invitation.password}</td>
-                        <td>${new Date(invitation.created).toLocaleDateString()}</td>
-                        <td style="color: ${statusColor};">${status}</td>
-                        <td style="color: ${rsvpColor}; font-weight: bold;">${rsvpStatus}</td>
-                        <td>
-                            <button class="btn btn-danger" onclick="event.stopPropagation(); deleteInvitation(${index})">Delete</button>
-                            <button class="btn" onclick="event.stopPropagation(); copyPassword('${invitation.password}')">Copy Password</button>
-                        </td>
-                    </tr>
-                `;
-            });
 
-            tableHTML += '</tbody></table>';
-            invitationsList.innerHTML = tableHTML;
-        }
-
-        // Show guest details modal
-        function showGuestDetails(guestName, invitationIndex) {
-            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-            const invitation = invitations[invitationIndex];
-            
-            // Always match by invitation password
-            const attendee = attendees.find(att => att.invitationPassword === invitation.password);
-            
-            // Use the actual name from RSVP if available, otherwise use invitation guest name
-            const displayName = (attendee && attendee.name) ? attendee.name : guestName;
-            
-            let detailsHTML = `
-                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
-                    <h2 style="color: #333; margin-bottom: 20px;">📋 Guest Details: ${displayName}</h2>
-            `;
-            
-            if (attendee) {
-                const statusColor = attendee.rsvpType === 'attending' ? '#4caf50' : '#f44336';
-                const statusText = attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming';
-                
-                detailsHTML += `
-                    <div style="margin-bottom: 20px;">
-                        <h3 style="color: ${statusColor}; margin-bottom: 15px;">RSVP Status: ${statusText}</h3>
-                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
-                            <p><strong>Name:</strong> ${attendee.name || 'Not provided'}</p>
-                `;
-                
-                if (attendee.rsvpType === 'attending') {
-                    detailsHTML += `
-                        <p><strong>Email:</strong> ${attendee.email || 'Not provided'}</p>
-                        <p><strong>Phone:</strong> ${attendee.phone || 'Not provided'}</p>
-                        <p><strong>City:</strong> ${attendee.city || 'Not provided'}</p>
-                        <p><strong>Relationship:</strong> ${attendee.relationship || 'Not specified'}</p>
-                        <p><strong>Companion:</strong> ${attendee.companionName || 'None'}</p>
-                        <p><strong>Dietary Restrictions:</strong> ${attendee.dietary || 'None'}</p>
-                        <p><strong>Message:</strong> ${attendee.message || 'No message'}</p>
-                    `;
+                if (password) {
+                    passwords[password.toUpperCase()] = {
+                        guestName: guestName,
+                        canBringCompanion: canBringCompanion,
+                        created: new Date().toISOString(),
+                        used: false
+                    };
+                    existingPasswords.push(password.toLowerCase());
+                    results.push(`${guestName}: ${password}`);
+                    successCount++;
                 } else {
-                    detailsHTML += `
-                        <p><strong>Reason for not attending:</strong> ${attendee.reason || 'No reason provided'}</p>
-                    `;
+                    results.push(`${guestName}: Failed to generate unique password`);
                 }
+            }
+
+            // Save passwords
+            localStorage.setItem('weddingPasswords', JSON.stringify(passwords));
+
+            // Clear form
+            document.getElementById('bulkGuestNames').value = '';
+            document.getElementById('bulkCanBringCompanion').checked = false;
+
+            // Refresh display
+            loadPasswordsList();
+            updateStatistics();
+
+            // Show results
+            const resultMessage = `✅ Bulk creation complete!\n\nSuccessfully created: ${successCount} passwords\n\n📋 All passwords:\n${results.map(r => `• ${r}`).join('\n')}`;
+            alert(resultMessage);
+        }
+
+        // Load passwords list
+        function loadPasswordsList() {
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            const passwordsList = document.getElementById('passwordsList');
+            
+            if (Object.keys(passwords).length === 0) {
+                passwordsList.innerHTML = '<p>No passwords created yet.</p>';
+                return;
+            }
+
+            let html = '<div class="password-list">';
+            
+            for (const [password, data] of Object.entries(passwords)) {
+                const usedStatus = data.used ? '✅ Used' : '⏳ Unused';
+                const companionStatus = data.canBringCompanion ? '👥 +1 allowed' : '👤 Solo';
                 
-                detailsHTML += `
+                html += `
+                    <div class="password-item">
+                        <div>
+                            <strong>${data.guestName}</strong><br>
+                            <code>${password}</code> | ${usedStatus} | ${companionStatus}
                         </div>
-                        <div style="margin-top: 20px;">
-                            <button class="btn btn-danger" onclick="deleteAttendeeByInvitationPassword('${invitation.password}')">Delete RSVP</button>
-                            <button class="btn" onclick="closeGuestDetails()">Close</button>
+                        <div>
+                            <button class="btn" onclick="copyPassword('${password}')" style="padding: 5px 10px; margin: 2px;">📋 Copy</button>
+                            <button class="btn btn-danger" onclick="deletePassword('${password}')" style="padding: 5px 10px; margin: 2px;">🗑️ Delete</button>
                         </div>
-                    </div>
-                `;
-            } else {
-                detailsHTML += `
-                    <div style="text-align: center; padding: 40px;">
-                        <p style="color: #666; font-size: 18px;">No RSVP found for this guest</p>
-                        <button class="btn" onclick="closeGuestDetails()">Close</button>
                     </div>
                 `;
             }
             
-            detailsHTML += '</div>';
-            
-            // Create modal overlay
-            const modal = document.createElement('div');
-            modal.id = 'guestDetailsModal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.8);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 2000;
-            `;
-            modal.innerHTML = detailsHTML;
-            document.body.appendChild(modal);
-        }
-
-        // Close guest details modal
-        function closeGuestDetails() {
-            const modal = document.getElementById('guestDetailsModal');
-            if (modal) {
-                modal.remove();
-            }
-        }
-
-        // Delete attendee by invitation password
-        function deleteAttendeeByInvitationPassword(invitationPassword) {
-            if (confirm(`Are you sure you want to delete the RSVP for this invitation?`)) {
-                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-                const updatedAttendees = attendees.filter(att => att.invitationPassword !== invitationPassword);
-                localStorage.setItem('weddingAttendees', JSON.stringify(updatedAttendees));
-                
-                // Refresh data and close modal
-                loadAdminData();
-                closeGuestDetails();
-                alert('RSVP deleted successfully!');
-            }
-        }
-
-        // Delete invitation
-        function deleteInvitation(index) {
-            if (confirm('Are you sure you want to delete this invitation?')) {
-                const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-                invitations.splice(index, 1);
-                localStorage.setItem('invitations', JSON.stringify(invitations));
-                loadInvitationsData();
-                alert('Invitation deleted successfully!');
-            }
+            html += '</div>';
+            passwordsList.innerHTML = html;
         }
 
         // Copy password to clipboard
         function copyPassword(password) {
             navigator.clipboard.writeText(password).then(() => {
-                alert('Password copied to clipboard!');
+                alert(`Password "${password}" copied to clipboard!`);
             }).catch(() => {
-                // Fallback for older browsers
                 const textArea = document.createElement('textarea');
                 textArea.value = password;
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                alert('Password copied to clipboard!');
+                alert(`Password "${password}" copied to clipboard!`);
             });
+        }
+
+        // Delete password
+        function deletePassword(password) {
+            if (confirm(`Delete password "${password}"?`)) {
+                const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+                delete passwords[password];
+                localStorage.setItem('weddingPasswords', JSON.stringify(passwords));
+                loadPasswordsList();
+                updateStatistics();
+            }
+        }
+
+        // Load attendees list
+        function loadAttendeesList() {
+            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+            const attendeesList = document.getElementById('attendeesList');
+            
+            if (attendees.length === 0) {
+                attendeesList.innerHTML = '<p>No RSVP responses yet.</p>';
+                return;
+            }
+
+            let html = `
+                <table class="attendees-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Status</th>
+                            <th>Companion</th>
+                            <th>Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            attendees.forEach((attendee, index) => {
+                const statusColor = attendee.rsvpType === 'attending' ? '#4caf50' : '#f44336';
+                const statusText = attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming';
+                const details = attendee.rsvpType === 'attending' ? 
+                    (attendee.dietary || 'No dietary restrictions') : 
+                    (attendee.reason || 'No reason provided');
+                
+                html += `
+                    <tr>
+                        <td><strong>${attendee.name}</strong></td>
+                        <td>${attendee.city || 'Not specified'}</td>
+                        <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
+                        <td>${attendee.companionName || 'None'}</td>
+                        <td>${details}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="deleteAttendee(${index})" style="padding: 5px 10px;">🗑️ Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            attendeesList.innerHTML = html;
+        }
+
+        // Delete attendee
+        function deleteAttendee(index) {
+            if (confirm('Are you sure you want to delete this RSVP?')) {
+                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+                attendees.splice(index, 1);
+                localStorage.setItem('weddingAttendees', JSON.stringify(attendees));
+                loadAttendeesList();
+                updateStatistics();
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            
+            document.getElementById('totalAttendees').textContent = attendees.length;
+            document.getElementById('confirmedAttendees').textContent = attendees.filter(a => a.rsvpType === 'attending').length;
+            document.getElementById('notComingAttendees').textContent = attendees.filter(a => a.rsvpType === 'not-attending').length;
+            document.getElementById('activePasswords').textContent = Object.keys(passwords).length;
         }
 
         // Export to CSV
         function exportToCSV() {
             const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
             if (attendees.length === 0) {
-                alert('No data to export.');
+                alert('No RSVP data to export.');
                 return;
             }
 
-            let csv = 'Name,City,Relationship,Companion,RSVP Status,Details\n';
+            let csv = 'Name,City,Status,Companion,Details\n';
             attendees.forEach(attendee => {
-                csv += `"${attendee.name}","${attendee.city || ''}","${attendee.relationship || ''}","${attendee.companionName || ''}","${attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming'}","${attendee.dietary || attendee.reason || 'No details'}"\n`;
+                const status = attendee.rsvpType === 'attending' ? 'Attending' : 'Not Coming';
+                const details = attendee.rsvpType === 'attending' ? 
+                    (attendee.dietary || 'No dietary restrictions') : 
+                    (attendee.reason || 'No reason provided');
+                csv += `"${attendee.name}","${attendee.city || ''}","${status}","${attendee.companionName || ''}","${details}"\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'wedding_attendees.csv';
+            a.download = 'wedding_rsvps.csv';
             a.click();
         }
 
         // Export to JSON
         function exportToJSON() {
             const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-            if (attendees.length === 0) {
-                alert('No data to export.');
-                return;
-            }
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            
+            const exportData = {
+                rsvps: attendees,
+                passwords: passwords,
+                exportDate: new Date().toISOString()
+            };
 
-            const dataStr = JSON.stringify(attendees, null, 2);
+            const dataStr = JSON.stringify(exportData, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'wedding_attendees.json';
+            a.download = 'wedding_data.json';
             a.click();
         }
 
         // Clear all data
         function clearAllData() {
             const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
             
-            const totalItems = attendees.length + invitations.length;
+            const totalItems = attendees.length + Object.keys(passwords).length;
             
             if (totalItems === 0) {
-                alert('No data to clear. All data is already empty.');
+                alert('No data to clear.');
                 return;
             }
             
             const warningMessage = `⚠️ WARNING: This will permanently delete ALL data!\n\n` +
                 `This includes:\n` +
-                `• ${attendees.length} RSVP responses (attendees)\n` +
-                `• ${invitations.length} generated invitations\n` +
-                `• All guest details, messages, and statistics\n\n` +
+                `• ${attendees.length} RSVP responses\n` +
+                `• ${Object.keys(passwords).length} active passwords\n\n` +
                 `This action CANNOT be undone!\n\n` +
-                `Are you absolutely sure you want to proceed?`;
+                `Are you absolutely sure?`;
             
             if (confirm(warningMessage)) {
-                // Double confirmation for safety
-                if (confirm('This is your final warning!\n\nClick OK to PERMANENTLY DELETE all wedding data, or Cancel to keep your data safe.')) {
-                    // Clear both attendees and invitations
+                if (confirm('Final confirmation - DELETE ALL DATA?')) {
                     localStorage.removeItem('weddingAttendees');
-                    localStorage.removeItem('invitations');
+                    localStorage.removeItem('weddingPasswords');
                     
-                    // Refresh all displays
                     loadAdminData();
-                    loadInvitationsData();
-                    updateStatistics();
-                    
-                    alert('✅ All data has been successfully cleared!\n\nAll RSVP responses and invitations have been permanently deleted.');
-                } else {
-                    alert('Data deletion cancelled. Your data is safe.');
+                    alert('✅ All data has been permanently deleted.');
                 }
-            } else {
-                alert('Data deletion cancelled. Your data is safe.');
             }
         }
 
         // Refresh data
         function refreshData() {
-            console.log('Manual refresh triggered...');
             loadAdminData();
             alert('Data refreshed successfully!');
-        }
-
-        // Update last refresh time
-        function updateLastRefreshTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString();
-            const dateString = now.toLocaleDateString();
-            
-            // Create or update the last refresh indicator
-            let refreshIndicator = document.getElementById('lastRefreshTime');
-            if (!refreshIndicator) {
-                refreshIndicator = document.createElement('div');
-                refreshIndicator.id = 'lastRefreshTime';
-                refreshIndicator.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: rgba(0, 0, 0, 0.8);
-                    color: white;
-                    padding: 10px 15px;
-                    border-radius: 20px;
-                    font-size: 12px;
-                    z-index: 1000;
-                    backdrop-filter: blur(10px);
-                `;
-                document.body.appendChild(refreshIndicator);
-            }
-            
-            refreshIndicator.textContent = `Last updated: ${dateString} ${timeString}`;
-            
-            // Fade out after 3 seconds
-            setTimeout(() => {
-                refreshIndicator.style.opacity = '0.7';
-            }, 3000);
         }
 
         // Toggle auto-refresh
         function toggleAutoRefresh() {
             const toggleLink = document.getElementById('autoRefreshToggle');
-            const currentText = toggleLink.textContent;
-            const isOn = currentText.includes('ON');
+            const isOn = toggleLink.textContent.includes('ON');
 
             if (isOn) {
                 stopAutoRefresh();
                 toggleLink.textContent = '⏰ Auto-Refresh: OFF';
-                toggleLink.style.color = '#f44336'; // Red color for off
-                alert('Auto-refresh disabled. Data will only update when you manually refresh.');
             } else {
                 startAutoRefresh();
                 toggleLink.textContent = '⏰ Auto-Refresh: ON';
-                toggleLink.style.color = '#4caf50'; // Green color for on
-                alert('Auto-refresh enabled. Data will update every minute.');
             }
         }
 
@@ -1162,327 +875,7 @@
         });
 
         // Initialize page
-        function initializePage() {
-            // Set up default auto-generated password
-            document.getElementById('autoGeneratedPassword').value = generateUniquePassword();
-            
-            // Set custom password method as default
-            document.querySelector('input[name="passwordMethod"][value="custom"]').checked = true;
-            togglePasswordMethod();
-        }
-
-        // Call initialization when page loads
-        document.addEventListener('DOMContentLoaded', initializePage);
-
-        // Debug function to show raw data
-        function showDebugInfo() {
-            const debugOutput = document.getElementById('debugOutput');
-            const isVisible = debugOutput.style.display !== 'none';
-            
-            if (isVisible) {
-                debugOutput.style.display = 'none';
-            } else {
-                debugOutput.style.display = 'block';
-                const attendees = JSON.parse(localStorage.getItem('weddingAttendees') || '[]');
-                const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-                
-                debugOutput.innerHTML = `
-                    <h5>Wedding Attendees (${attendees.length} records):</h5>
-                    <pre>${JSON.stringify(attendees, null, 2)}</pre>
-                    <h5>Invitations (${invitations.length} records):</h5>
-                    <pre>${JSON.stringify(invitations, null, 2)}</pre>
-                `;
-            }
-        }
-
-        // Bulk invitation creation function
-        function createBulkInvitations() {
-            const guestNamesInput = document.getElementById('bulkGuestNames').value;
-            const canBringCompanion = document.getElementById('bulkCanBringCompanion').checked;
-            const guestNamesArray = guestNamesInput.split('\n').map(name => name.trim()).filter(name => name.length > 0);
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-            let successCount = 0;
-            let failedCount = 0;
-            const allPasswords = [];
-
-            if (guestNamesArray.length === 0) {
-                alert('Please enter at least one guest name in the text area.');
-                return;
-            }
-
-            if (!confirm(`Create invitations for ${guestNamesArray.length} guests?\n\nGuests:\n${guestNamesArray.slice(0, 10).join(', ')}${guestNamesArray.length > 10 ? '...' : ''}`)) {
-                return;
-            }
-
-            for (const guestName of guestNamesArray) {
-                // Check if guest already has invitation
-                const existingInvitation = invitations.find(inv => inv.guestName.toLowerCase() === guestName.toLowerCase());
-                if (existingInvitation) {
-                    allPasswords.push(`${guestName}: ${existingInvitation.password} (Already exists)`);
-                    failedCount++;
-                    continue;
-                }
-
-                // Generate smart password based on name
-                let password = generateSmartPassword(guestName, invitations);
-                
-                if (!password) {
-                    // Fallback to random generation
-                    password = generateUniquePassword();
-                    let attempts = 0;
-                    while (invitations.some(inv => inv.password === password) && attempts < 10) {
-                        password = generateUniquePassword();
-                        attempts++;
-                    }
-                    
-                    if (attempts >= 10) {
-                        allPasswords.push(`${guestName}: Unable to generate unique password`);
-                        failedCount++;
-                        continue;
-                    }
-                }
-
-                // Create new invitation
-                const newInvitation = {
-                    id: Date.now() + Math.random(), // Ensure unique ID
-                    guestName: guestName,
-                    password: password,
-                    created: new Date().toISOString(),
-                    used: false,
-                    canBringCompanion: canBringCompanion,
-                    passwordMethod: 'bulk-auto'
-                };
-
-                invitations.push(newInvitation);
-                allPasswords.push(`${guestName}: ${password}`);
-                successCount++;
-            }
-
-            // Save all invitations
-            localStorage.setItem('invitations', JSON.stringify(invitations));
-
-            // Clear the text area
-            document.getElementById('bulkGuestNames').value = '';
-            document.getElementById('bulkCanBringCompanion').checked = false;
-
-            // Show results
-            let resultMessage = `✅ Bulk Creation Complete!\n\n`;
-            resultMessage += `Successfully created: ${successCount} invitations\n`;
-            if (failedCount > 0) {
-                resultMessage += `Failed/Skipped: ${failedCount} invitations\n`;
-            }
-            resultMessage += `\n📋 All Passwords:\n${allPasswords.map(p => `• ${p}`).join('\n')}`;
-
-            alert(resultMessage);
-            loadInvitationsData();
-        }
-
-        // Generate smart password based on guest name
-        function generateSmartPassword(guestName, existingInvitations) {
-            const existingPasswords = existingInvitations.map(inv => inv.password.toLowerCase());
-            const nameParts = guestName.split(' ').filter(part => part.length > 0);
-            const cleanName = guestName.replace(/[^a-zA-Z]/g, '');
-
-            // Try different patterns
-            const patterns = [
-                // First name + Last name (e.g., "JohnSmith")
-                nameParts.length >= 2 ? nameParts[0] + nameParts[nameParts.length - 1] : null,
-                // First name + 2024 (e.g., "John2024")
-                nameParts.length >= 1 ? nameParts[0] + '2024' : null,
-                // Clean name (e.g., "JohnSmith")
-                cleanName.length >= 3 && cleanName.length <= 12 ? cleanName : null,
-                // First name + Last initial (e.g., "JohnS")
-                nameParts.length >= 2 ? nameParts[0] + nameParts[nameParts.length - 1][0].toUpperCase() : null,
-                // Initials + 2024 (e.g., "JS2024")
-                nameParts.length >= 2 ? nameParts.map(part => part[0]).join('').toUpperCase() + '2024' : null
-            ];
-
-            // Find first available pattern
-            for (const pattern of patterns) {
-                if (pattern && !existingPasswords.includes(pattern.toLowerCase())) {
-                    return pattern;
-                }
-            }
-
-            return null; // Let caller fallback to random generation
-        }
-
-        // Cloud Sync Functions
-        function generateShareableLink() {
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-            const baseUrl = window.location.origin + window.location.pathname;
-            const syncCode = `wedding-sync://${baseUrl}?invitations=${encodeURIComponent(JSON.stringify(invitations))}`;
-            
-            document.getElementById('syncCodeDisplay').value = syncCode;
-            document.getElementById('shareableCodeResult').style.display = 'block';
-            alert('Shareable link generated! Copy it to your mobile device.');
-        }
-
-        function copySyncCode() {
-            const syncCode = document.getElementById('syncCodeDisplay').value;
-            navigator.clipboard.writeText(syncCode).then(() => {
-                alert('Sync code copied to clipboard!');
-            }).catch(() => {
-                const textArea = document.createElement('textarea');
-                textArea.value = syncCode;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('Sync code copied to clipboard!');
-            });
-        }
-
-        function exportInvitationsJSON() {
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-            const dataStr = JSON.stringify(invitations, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'wedding_invitations.json';
-            a.click();
-            alert('Invitations data downloaded as wedding_invitations.json');
-        }
-
-        function importInvitationsJSON(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                alert('Please select a file to import.');
-                return;
-            }
-
-            if (!file.name.endsWith('.json')) {
-                alert('Please select a valid JSON file (.json) to import.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedInvitations = JSON.parse(e.target.result);
-                    if (!Array.isArray(importedInvitations)) {
-                        alert('The imported file does not contain a valid array of invitations.');
-                        return;
-                    }
-
-                    const currentInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-                    const newInvitations = [...currentInvitations];
-
-                    // Merge imported invitations, prioritizing existing ones
-                    importedInvitations.forEach(importedInv => {
-                        const existingIndex = newInvitations.findIndex(inv => inv.password === importedInv.password);
-                        if (existingIndex !== -1) {
-                            newInvitations[existingIndex] = importedInv; // Update existing
-                        } else {
-                            newInvitations.push(importedInv); // Add new
-                        }
-                    });
-
-                    localStorage.setItem('invitations', JSON.stringify(newInvitations));
-                    alert('Invitations data imported successfully!');
-                    loadInvitationsData();
-                    updateStatistics();
-                } catch (error) {
-                    console.error('Error importing invitations:', error);
-                    alert('Error importing invitations: ' + error.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // NEW: Universal Password System Functions
-        function generateUniversalPasswordCode() {
-            const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-            
-            if (invitations.length === 0) {
-                alert('❌ No invitations found! Create some custom passwords first, then generate the universal code.');
-                return;
-            }
-            
-            // Generate JavaScript object format for custom passwords
-            let codeLines = [];
-            
-            invitations.forEach(inv => {
-                const canBring = inv.canBringCompanion ? 'true' : 'false';
-                codeLines.push(`                '${inv.password.toUpperCase()}': { guestName: '${inv.guestName}', canBringCompanion: ${canBring} },`);
-            });
-            
-            const code = `                // ADD YOUR CUSTOM PASSWORDS HERE:
-${codeLines.join('\n')}
-                // END OF CUSTOM PASSWORDS`;
-            
-            document.getElementById('universalCodeDisplay').value = code;
-            document.getElementById('universalCodeResult').style.display = 'block';
-            document.getElementById('copyUniversalBtn').disabled = false;
-            
-            alert(`✅ Universal password code generated!\n\n📊 Found ${invitations.length} custom passwords\n\n📝 Copy the code and paste it into your login.html file to make passwords work on ALL devices!`);
-        }
-        
-        function copyUniversalCode() {
-            const code = document.getElementById('universalCodeDisplay').value;
-            navigator.clipboard.writeText(code).then(() => {
-                alert('✅ Universal password code copied to clipboard!\n\n📝 Next steps:\n1. Open login.html\n2. Find: "// ADD YOUR CUSTOM PASSWORDS HERE:"\n3. Replace with copied code\n4. Save file - passwords now work everywhere!');
-            }).catch(() => {
-                const textArea = document.createElement('textarea');
-                textArea.value = code;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('✅ Universal password code copied to clipboard!\n\n📝 Next steps:\n1. Open login.html\n2. Find: "// ADD YOUR CUSTOM PASSWORDS HERE:"\n3. Replace with copied code\n4. Save file - passwords now work everywhere!');
-            });
-        }
-
-        // Add password to the list
-        function addToPasswordList() {
-            const guestName = document.getElementById('guestName').value.trim();
-            const customPassword = document.getElementById('customPassword').value.trim();
-            const canBringCompanion = document.getElementById('canBringCompanion').checked;
-
-            if (!guestName || !customPassword) {
-                alert('Please enter both guest name and custom password.');
-                return;
-            }
-
-            const passwordListContent = document.getElementById('passwordListContent');
-            const existingPasswords = JSON.parse(localStorage.getItem('universalPasswordList') || '[]');
-
-            // Check if password already exists
-            if (existingPasswords.some(p => p.password.toUpperCase() === customPassword.toUpperCase())) {
-                alert(`Password "${customPassword}" for guest "${guestName}" already exists in the list.`);
-                return;
-            }
-
-            const newPasswordEntry = {
-                guestName: guestName,
-                password: customPassword,
-                canBringCompanion: canBringCompanion
-            };
-
-            existingPasswords.push(newPasswordEntry);
-            localStorage.setItem('universalPasswordList', JSON.stringify(existingPasswords));
-
-            // Clear inputs and show list
-            document.getElementById('guestName').value = '';
-            document.getElementById('customPassword').value = '';
-            document.getElementById('canBringCompanion').checked = false;
-            passwordListContent.innerHTML = ''; // Clear previous list
-            existingPasswords.forEach(p => {
-                passwordListContent.innerHTML += `• ${p.guestName}: ${p.password} (Can bring +1: ${p.canBringCompanion ? 'Yes' : 'No'})\n`;
-            });
-            document.getElementById('passwordListDisplay').style.display = 'block';
-        }
-
-        // Clear the entire password list
-        function clearPasswordList() {
-            if (confirm('Are you sure you want to clear the entire custom password list?')) {
-                localStorage.removeItem('universalPasswordList');
-                document.getElementById('passwordListContent').innerHTML = '';
-                document.getElementById('passwordListDisplay').style.display = 'none';
-                alert('Custom password list cleared.');
-            }
-        }
+        console.log('Wedding Admin Panel loaded successfully!');
     </script>
 </body>
 </html> 
