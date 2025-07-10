@@ -45,6 +45,28 @@
             <p class="wedding-date">Are getting married</p>
             <p class="wedding-location">Saturday, December 14th, 2024</p>
             <p class="wedding-location">The Grand Ballroom • New York City</p>
+            
+            <!-- Prenup Video Section -->
+            <div class="prenup-video-section">
+                <div class="video-container">
+                    <video id="prenupVideo" controls preload="metadata" autoplay muted loop poster="https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=600&h=400&fit=crop&crop=center">
+                        <!-- Beautiful sample prenup/wedding videos from the internet -->
+                        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                        <source src="https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4" type="video/mp4">
+                        <source src="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4" type="video/mp4">
+                        <!-- Pixabay sample romantic videos -->
+                        <source src="https://cdn.pixabay.com/vimeo/394176848/wedding-43248.mp4?width=1920&hash=7d0b1e0b5b3e1c2e3d4f5a6b7c8d9e0f" type="video/mp4">
+                        <source src="https://cdn.pixabay.com/vimeo/451347338/bride-51894.mp4?width=1920&hash=1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d" type="video/mp4">
+                        <!-- YouTube sample videos (may need conversion) -->
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        <source src="prenup-video.mp4" type="video/mp4">
+                        <source src="prenup-video.webm" type="video/webm">
+                        <p>Your browser doesn't support video. Please update your browser to view our prenup video.</p>
+                    </video>
+                </div>
+                <p class="video-caption">Our Love Story</p>
+            </div>
         </header>
 
         <div class="countdown-section">
@@ -214,6 +236,37 @@
     <script src="script.js"></script>
 
     <script>
+    // --- Prenup Video Autoplay Logic ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const prenupVideo = document.getElementById('prenupVideo');
+        
+        if (prenupVideo) {
+            // Try to autoplay the video
+            prenupVideo.play().then(() => {
+                console.log('Prenup video autoplay started successfully');
+            }).catch((error) => {
+                console.log('Prenup video autoplay failed:', error);
+            });
+            
+            // Unmute video after any user interaction
+            function enableVideoAudio() {
+                prenupVideo.muted = false;
+                prenupVideo.volume = 0.3; // Set to 30% volume
+                console.log('Prenup video unmuted after user interaction');
+                
+                // Remove listeners after first interaction
+                document.removeEventListener('click', enableVideoAudio);
+                document.removeEventListener('keydown', enableVideoAudio);
+                document.removeEventListener('scroll', enableVideoAudio);
+            }
+            
+            // Listen for user interactions to enable audio
+            document.addEventListener('click', enableVideoAudio);
+            document.addEventListener('keydown', enableVideoAudio);
+            document.addEventListener('scroll', enableVideoAudio);
+        }
+    });
+
     // --- RSVP Modal Logic (robust, runs after DOM loaded) ---
     function updateRSVPFormFields() {
         var rsvpType = document.getElementById('rsvpType').value;
