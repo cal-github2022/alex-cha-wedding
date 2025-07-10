@@ -89,15 +89,54 @@ function updateCountdown() {
     }
 }
 
-// Background slideshow function
+// Background slideshow function - RESTORED with wedding images
 function startSlideshow() {
+    console.log('Starting wedding image slideshow...');
     const slides = document.querySelectorAll('.slide');
     let currentSlide = 0;
+    
+    if (slides.length === 0) {
+        console.error('No slides found for slideshow');
+        return;
+    }
+    
+    console.log('Found', slides.length, 'wedding images for slideshow');
+    
+    // Initialize: Hide all slides first, then show the first one
+    slides.forEach((slide, index) => {
+        slide.classList.remove('active');
+        slide.style.opacity = '0';
+        console.log(`Slide ${index + 1} reset`);
+    });
+    
+    // Show first slide
+    slides[0].classList.add('active');
+    slides[0].style.opacity = '1';
+    console.log('First wedding image activated and forced visible');
+    
+    // Debug: Check computed styles
+    setTimeout(() => {
+        slides.forEach((slide, index) => {
+            const computedStyle = window.getComputedStyle(slide);
+            console.log(`Slide ${index + 1} opacity:`, computedStyle.opacity, 'background:', computedStyle.backgroundImage.substring(0, 100) + '...');
+        });
+    }, 100);
 
     setInterval(() => {
+        console.log(`Transitioning from slide ${currentSlide + 1}...`);
+        
+        // Hide current slide
         slides[currentSlide].classList.remove('active');
+        slides[currentSlide].style.opacity = '0';
+        
+        // Move to next slide
         currentSlide = (currentSlide + 1) % slides.length;
+        
+        // Show new slide
         slides[currentSlide].classList.add('active');
+        slides[currentSlide].style.opacity = '1';
+        
+        console.log(`Switched to wedding image ${currentSlide + 1}`);
     }, 5000); // Change slide every 5 seconds
 }
 
@@ -640,8 +679,10 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCountdown();
     setInterval(updateCountdown, 1000);
     
-    // Start background slideshow
-    startSlideshow();
+    // Start background slideshow with a delay to ensure images load
+    setTimeout(() => {
+        startSlideshow();
+    }, 500);
     
     // Add interactive effects
     addInteractiveEffects();

@@ -49,7 +49,7 @@
             <!-- Prenup Video Section -->
             <div class="prenup-video-section">
                 <div class="video-container">
-                    <video id="prenupVideo" controls preload="metadata" autoplay muted loop poster="https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=600&h=400&fit=crop&crop=center">
+                    <video id="prenupVideo" controls preload="metadata" autoplay muted loop playsinline webkit-playsinline poster="https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=600&h=400&fit=crop&crop=center">
                         <!-- Beautiful sample prenup/wedding videos from the internet -->
                         <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
                         <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
@@ -64,6 +64,14 @@
                         <source src="prenup-video.webm" type="video/webm">
                         <p>Your browser doesn't support video. Please update your browser to view our prenup video.</p>
                     </video>
+                    
+                    <!-- Mobile-friendly play button overlay (shown when autoplay fails) -->
+                    <div id="videoPlayOverlay" class="video-play-overlay" style="display: none;">
+                        <button id="manualPlayButton" class="manual-play-btn">
+                            <span class="play-icon">▶</span>
+                            <span class="play-text">Tap to play our love story</span>
+                        </button>
+                    </div>
                 </div>
                 <p class="video-caption">Our Love Story</p>
             </div>
@@ -236,34 +244,228 @@
     <script src="script.js"></script>
 
     <script>
-    // --- Prenup Video Autoplay Logic ---
+    // --- Enhanced Prenup Video Autoplay Logic with Mobile Support ---
     document.addEventListener('DOMContentLoaded', function() {
         const prenupVideo = document.getElementById('prenupVideo');
+        const videoPlayOverlay = document.getElementById('videoPlayOverlay');
+        const manualPlayButton = document.getElementById('manualPlayButton');
+        let videoAttemptedPlay = false;
         
         if (prenupVideo) {
-            // Try to autoplay the video
-            prenupVideo.play().then(() => {
-                console.log('Prenup video autoplay started successfully');
-            }).catch((error) => {
-                console.log('Prenup video autoplay failed:', error);
+            console.log('Initializing prenup video...');
+            
+            // Detect mobile device
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            console.log('Device detection:', {
+                isMobile: isMobile,
+                isIOS: isIOS,
+                isAndroid: isAndroid,
+                userAgent: navigator.userAgent
+            });
+            
+            // Set up intersection observer for performance (only try to play when video is visible)
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !videoAttemptedPlay) {
+                        console.log('Video came into view, attempting autoplay...');
+                        attemptVideoAutoplay();
+                    }
+                });
+            }, {
+                threshold: 0.25 // Play when 25% of video is visible
+            });
+            
+            videoObserver.observe(prenupVideo);
+            
+            // Enhanced autoplay attempt function
+            function attemptVideoAutoplay() {
+                videoAttemptedPlay = true;
+                
+                // For mobile devices, show overlay immediately as autoplay rarely works
+                if (isMobile) {
+                    console.log('Mobile device detected, showing play overlay');
+                    videoPlayOverlay.style.display = 'flex';
+                    return;
+                }
+                
+                // For desktop, try autoplay first
+                console.log('Desktop device, attempting autoplay...');
+                const playPromise = prenupVideo.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Prenup video autoplay started successfully');
+                        videoPlayOverlay.style.display = 'none';
+                        showVideoPlayingNotification();
+                    }).catch((error) => {
+                        console.log('Prenup video autoplay failed:', error.name, error.message);
+                        videoPlayOverlay.style.display = 'flex';
+                        
+                        // Show specific error message for desktop
+                        if (error.name === 'NotAllowedError') {
+                            console.log('Autoplay blocked by browser policy');
+                        }
+                    });
+                } else {
+                    console.log('Browser does not support play() promise');
+                    videoPlayOverlay.style.display = 'flex';
+                }
+            }
+            
+            // Handle manual play button click
+            manualPlayButton.addEventListener('click', () => {
+                console.log('Manual play button clicked');
+                
+                const playPromise = prenupVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Prenup video manually played successfully');
+                        videoPlayOverlay.style.display = 'none';
+                        showVideoPlayingNotification();
+                        enableVideoAudio(); // Unmute if user manually played
+                    }).catch((error) => {
+                        console.error('Prenup video manual play failed:', error);
+                        alert('Unable to play video. Please check your browser settings or try a different browser.');
+                    });
+                } else {
+                    console.log('Trying direct play for older browsers...');
+                    try {
+                        prenupVideo.play();
+                        videoPlayOverlay.style.display = 'none';
+                        showVideoPlayingNotification();
+                    } catch (error) {
+                        console.error('Direct play failed:', error);
+                        alert('Video playback is not supported on this device/browser.');
+                    }
+                }
+            });
+            
+            // Video event listeners
+            prenupVideo.addEventListener('loadstart', () => {
+                console.log('Video loading started...');
+            });
+            
+            prenupVideo.addEventListener('loadedmetadata', () => {
+                console.log('Video metadata loaded, duration:', prenupVideo.duration);
+            });
+            
+            prenupVideo.addEventListener('canplay', () => {
+                console.log('Video can play');
+            });
+            
+            prenupVideo.addEventListener('playing', () => {
+                console.log('Video is playing');
+                videoPlayOverlay.style.display = 'none';
+            });
+            
+            prenupVideo.addEventListener('pause', () => {
+                console.log('Video paused');
+            });
+            
+            prenupVideo.addEventListener('ended', () => {
+                console.log('Video ended, will loop');
+            });
+            
+            prenupVideo.addEventListener('error', (e) => {
+                console.error('Video error:', e);
+                console.error('Video error details:', prenupVideo.error);
+                videoPlayOverlay.style.display = 'flex';
+                manualPlayButton.innerHTML = '<span class="play-icon">⚠️</span><span class="play-text">Video unavailable</span>';
+                manualPlayButton.disabled = true;
             });
             
             // Unmute video after any user interaction
             function enableVideoAudio() {
-                prenupVideo.muted = false;
-                prenupVideo.volume = 0.3; // Set to 30% volume
-                console.log('Prenup video unmuted after user interaction');
+                if (prenupVideo.muted) {
+                    prenupVideo.muted = false;
+                    prenupVideo.volume = 0.3; // Set to 30% volume
+                    console.log('Prenup video unmuted after user interaction');
+                    showVideoUnmutedNotification();
+                }
                 
                 // Remove listeners after first interaction
                 document.removeEventListener('click', enableVideoAudio);
                 document.removeEventListener('keydown', enableVideoAudio);
                 document.removeEventListener('scroll', enableVideoAudio);
+                document.removeEventListener('touchstart', enableVideoAudio);
             }
             
-            // Listen for user interactions to enable audio
+            // Listen for user interactions to enable audio (including touch for mobile)
             document.addEventListener('click', enableVideoAudio);
             document.addEventListener('keydown', enableVideoAudio);
             document.addEventListener('scroll', enableVideoAudio);
+            document.addEventListener('touchstart', enableVideoAudio);
+            
+            // Show notification when video starts playing
+            function showVideoPlayingNotification() {
+                const notification = document.createElement('div');
+                notification.textContent = '🎬 Our love story is now playing';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(212, 175, 55, 0.9);
+                    color: white;
+                    padding: 10px 16px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    z-index: 1001;
+                    backdrop-filter: blur(10px);
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                    pointer-events: none;
+                    font-family: 'Playfair Display', serif;
+                    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.style.opacity = '1', 100);
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Show notification when video is unmuted
+            function showVideoUnmutedNotification() {
+                const notification = document.createElement('div');
+                notification.textContent = '🔊 Video audio enabled';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(139, 69, 19, 0.9);
+                    color: white;
+                    padding: 8px 14px;
+                    border-radius: 15px;
+                    font-size: 11px;
+                    z-index: 1001;
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                    pointer-events: none;
+                    font-family: 'Playfair Display', serif;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.style.opacity = '1', 100);
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 2000);
+            }
         }
     });
 
