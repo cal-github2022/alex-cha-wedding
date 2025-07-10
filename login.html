@@ -256,6 +256,7 @@
             
             console.log('=== LOGIN DEBUG ===');
             console.log('Entered password:', password);
+            console.log('Password uppercase:', passwordUpper);
             
             // STEP 1: Check admin master password first
             if (passwordUpper === 'ALEXCHA2024') {
@@ -264,12 +265,13 @@
                 return;
             }
             
-            // STEP 2: Check localStorage passwords (created in admin panel)
+            // STEP 2: Check localStorage passwords (for local development)
             const weddingPasswords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            console.log('localStorage passwords:', Object.keys(weddingPasswords));
             
             if (weddingPasswords[passwordUpper]) {
                 const passwordData = weddingPasswords[passwordUpper];
-                console.log('Custom password found:', passwordData);
+                console.log('LocalStorage password found:', passwordData);
                 
                 // Mark password as used
                 passwordData.used = true;
@@ -280,8 +282,28 @@
                 return;
             }
             
-            // STEP 3: All authentication failed
-            console.log('Authentication failed');
+            // STEP 3: Check hardcoded passwords (for GitHub Pages)
+            // REPLACE THIS SECTION WITH EXPORTED PASSWORDS FROM ADMIN PANEL
+            const hardcodedPasswords = {
+                // Paste exported passwords here
+                // Example:
+                // 'JOHNSMITH': { guestName: 'John Smith', canBringCompanion: true },
+                // 'SARAH2024': { guestName: 'Sarah Johnson', canBringCompanion: false },
+            };
+            
+            console.log('Hardcoded passwords:', Object.keys(hardcodedPasswords));
+            
+            if (hardcodedPasswords[passwordUpper]) {
+                const passwordData = hardcodedPasswords[passwordUpper];
+                console.log('Hardcoded password found:', passwordData);
+                grantAccess(passwordData.guestName, passwordUpper, passwordData.canBringCompanion);
+                return;
+            }
+            
+            // STEP 4: All authentication failed
+            console.log('Authentication failed - password not found');
+            console.log('Checked localStorage keys:', Object.keys(weddingPasswords));
+            console.log('Checked hardcoded keys:', Object.keys(hardcodedPasswords));
             showAuthenticationError();
         }
         
@@ -353,6 +375,13 @@
             if (panel.style.display === 'none') {
                 // Show debug panel with system info
                 const weddingPasswords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+                const hardcodedPasswords = {
+                    // This should match the hardcodedPasswords in checkPassword function
+                };
+                
+                const localCount = Object.keys(weddingPasswords).length;
+                const hardcodedCount = Object.keys(hardcodedPasswords).length;
+                const totalPasswords = localCount + hardcodedCount;
                 
                 info.innerHTML = `
                     <strong>🔒 Wedding Website Security Status:</strong><br>
@@ -361,18 +390,21 @@
                     Only invited guests with valid passwords can access.<br>
                     </span><br><br>
                     
-                    <strong>⭐ Custom Invitation Status:</strong><br>
+                    <strong>⭐ Password Status:</strong><br>
                     <span style="color: #ff9800; font-weight: bold; font-size: 13px;">
-                    ${Object.keys(weddingPasswords).length > 0 ? 
-                        `${Object.keys(weddingPasswords).length} custom invitation passwords are set.<br>Contact Alex & Cha for your personal password.` : 
-                        'No custom passwords set.<br>Contact Alex & Cha for access.'}<br>
+                    ${localCount > 0 ? `📱 Local passwords: ${localCount}<br>` : ''}
+                    ${hardcodedCount > 0 ? `🌐 Live website passwords: ${hardcodedCount}<br>` : ''}
+                    ${totalPasswords > 0 ? 
+                        `Total active passwords: ${totalPasswords}<br>Contact Alex & Cha for your personal password.` : 
+                        'No passwords set.<br>Contact Alex & Cha for access.'}<br>
                     </span><br>
                     
                     <strong>System Info:</strong><br>
                     User Agent: ${navigator.userAgent}<br>
                     Is Mobile: ${/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)}<br>
                     LocalStorage Available: ${typeof(Storage) !== "undefined"}<br>
-                    SessionStorage Available: ${typeof(sessionStorage) !== "undefined"}<br><br>
+                    SessionStorage Available: ${typeof(sessionStorage) !== "undefined"}<br>
+                    Domain: ${window.location.protocol}//${window.location.host}<br><br>
                     
                     <strong>🎯 How to Get Access:</strong><br>
                     <span style="color: #2196f3; font-weight: bold;">
@@ -404,9 +436,26 @@
             window.location.href = 'index.html';
         }
         
+        // Domain check warning
+        if (window.location.protocol === 'file:') {
+            console.warn('⚠️ WARNING: Opening file directly - localStorage may not work properly!');
+            console.warn('💡 Solution: Use http://localhost:8080/login.html instead');
+        }
+        
         // Focus on password input when page loads
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('password').focus();
+            
+            // Show domain warning if needed
+            if (window.location.protocol === 'file:') {
+                setTimeout(() => {
+                    alert('⚠️ IMPORTANT: You\'re opening this file directly!\n\n' +
+                          '🔧 For passwords to work properly, please:\n' +
+                          '1. Start web server: python -m http.server 8080\n' +
+                          '2. Use: http://localhost:8080/login.html\n\n' +
+                          '📝 localStorage only works properly through web server!');
+                }, 1000);
+            }
         });
         
         // Allow Enter key to submit

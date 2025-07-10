@@ -26,7 +26,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden;
         }
-
+        
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -61,14 +61,14 @@
         .content {
             padding: 30px;
         }
-
+        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
-
+        
         .stat-card {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -76,13 +76,13 @@
             border-radius: 15px;
             text-align: center;
         }
-
+        
         .stat-number {
             font-size: 2.5em;
             font-weight: bold;
             margin-bottom: 10px;
         }
-
+        
         .stat-label {
             font-size: 1.1em;
             opacity: 0.9;
@@ -127,7 +127,7 @@
             margin-bottom: 20px;
             color: #333;
         }
-
+        
         .admin-login-modal input {
             width: 100%;
             padding: 12px;
@@ -186,7 +186,7 @@
             margin: 5px;
             transition: all 0.3s ease;
         }
-
+        
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -248,7 +248,7 @@
         .hidden {
             display: none;
         }
-
+        
         .password-list {
             background: #f8f9fa;
             border: 1px solid #ddd;
@@ -291,7 +291,7 @@
             border: 1px solid #ffeaa7;
             color: #856404;
         }
-
+        
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -305,6 +305,11 @@
             .form-row {
                 flex-direction: column;
             }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -327,29 +332,29 @@
             <div class="header">
                 <h1>Admin Panel</h1>
                 <p>Alex & Cha's Wedding Management</p>
-                <div class="nav-links">
+        <div class="nav-links">
                     <a href="index.html" target="_blank">Wedding Site</a>
-                    <a href="#" onclick="refreshData()">🔄 Refresh Data</a>
+            <a href="#" onclick="refreshData()">🔄 Refresh Data</a>
                     <a href="#" onclick="toggleAutoRefresh()" id="autoRefreshToggle">⏰ Auto-Refresh: ON</a>
                 </div>
-            </div>
+        </div>
 
             <div class="content">
                 <!-- Statistics -->
-                <div class="stats-grid">
-                    <div class="stat-card">
+        <div class="stats-grid">
+            <div class="stat-card">
                         <div class="stat-number" id="totalAttendees">0</div>
-                        <div class="stat-label">Total RSVPs</div>
-                    </div>
-                    <div class="stat-card">
+                <div class="stat-label">Total RSVPs</div>
+            </div>
+            <div class="stat-card">
                         <div class="stat-number" id="confirmedAttendees">0</div>
-                        <div class="stat-label">Attending</div>
-                    </div>
-                    <div class="stat-card">
+                <div class="stat-label">Attending</div>
+            </div>
+            <div class="stat-card">
                         <div class="stat-number" id="notComingAttendees">0</div>
                         <div class="stat-label">Not Coming</div>
-                    </div>
-                    <div class="stat-card">
+            </div>
+            <div class="stat-card">
                         <div class="stat-number" id="activePasswords">0</div>
                         <div class="stat-label">Active Passwords</div>
                     </div>
@@ -362,6 +367,9 @@
                         <strong>✅ Instant Access:</strong> Passwords created here work immediately - no manual steps required!
                     </div>
                     
+                    <!-- GitHub Status -->
+                    <div id="githubStatus"></div>
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="guestName">Guest Name</label>
@@ -373,9 +381,9 @@
                         </div>
                         <div class="form-group">
                             <button class="btn" onclick="suggestPassword()">💡 Suggest</button>
-                        </div>
-                    </div>
-                    
+            </div>
+        </div>
+
                     <div class="checkbox-group">
                         <input type="checkbox" id="canBringCompanion">
                         <label for="canBringCompanion">Guest can bring a +1</label>
@@ -399,8 +407,8 @@
                     <div class="checkbox-group">
                         <input type="checkbox" id="bulkCanBringCompanion">
                         <label for="bulkCanBringCompanion">All guests can bring +1</label>
-                    </div>
-                    
+            </div>
+            
                     <button class="btn" onclick="createBulkPasswords()" style="background: #ff9800;">🚀 Create All Passwords</button>
                 </div>
 
@@ -409,22 +417,24 @@
                     <h2>🔑 Active Passwords</h2>
                     <div id="passwordsList">
                         <p>Loading passwords...</p>
-                    </div>
-                </div>
+            </div>
+        </div>
 
                 <!-- Guest Management -->
                 <div class="section">
                     <h2>📋 RSVP Responses</h2>
                     <div id="attendeesList">
                         <p>Loading RSVPs...</p>
-                    </div>
+            </div>
                     
                     <div style="margin-top: 20px;">
                         <button class="btn" onclick="exportToCSV()">Export CSV</button>
                         <button class="btn" onclick="exportToJSON()">Export JSON</button>
+                        <button class="btn" onclick="exportForGitHub()" style="background: #28a745;">🚀 Export for GitHub Pages</button>
+                        <button class="btn" onclick="syncPasswordsToGitHub()" style="background: #007bff;">⚡ Auto-Sync to GitHub</button>
                         <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
                     </div>
-                </div>
+    </div>
             </div>
         </div>
     </div>
@@ -473,6 +483,7 @@
             loadPasswordsList();
             loadAttendeesList();
             updateStatistics();
+            updateGitHubStatus(); // Update GitHub status on load
         }
 
         // Create single password
@@ -488,6 +499,13 @@
 
             // Get existing passwords
             const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            
+            console.log('=== ADMIN DEBUG: Creating Password ===');
+            console.log('Guest Name:', guestName);
+            console.log('Password:', password);
+            console.log('Password uppercase:', password.toUpperCase());
+            console.log('Can bring companion:', canBringCompanion);
+            console.log('Existing passwords before:', passwords);
             
             // Check if password already exists
             if (passwords[password.toUpperCase()]) {
@@ -505,6 +523,9 @@
 
             // Save to localStorage
             localStorage.setItem('weddingPasswords', JSON.stringify(passwords));
+            
+            console.log('Passwords after save:', JSON.parse(localStorage.getItem('weddingPasswords') || '{}'));
+            console.log('=== END ADMIN DEBUG ===');
 
             // Clear form
             document.getElementById('guestName').value = '';
@@ -516,6 +537,12 @@
             updateStatistics();
 
             alert(`✅ Password created successfully!\n\nGuest: ${guestName}\nPassword: ${password}\n\nThis password is now active and ready to use!`);
+
+            // Trigger GitHub sync if enabled
+            const settings = JSON.parse(localStorage.getItem('githubSettings') || '{}');
+            if (settings.enabled) {
+                syncPasswordsToGitHub();
+            }
         }
 
         // Suggest password based on guest name
@@ -579,11 +606,11 @@
                 alert('Please enter valid guest names.');
                 return;
             }
-
+            
             if (!confirm(`Create passwords for ${guestNames.length} guests?`)) {
                 return;
             }
-
+            
             const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
             const existingPasswords = Object.keys(passwords).map(p => p.toLowerCase());
             const results = [];
@@ -638,6 +665,12 @@
             // Show results
             const resultMessage = `✅ Bulk creation complete!\n\nSuccessfully created: ${successCount} passwords\n\n📋 All passwords:\n${results.map(r => `• ${r}`).join('\n')}`;
             alert(resultMessage);
+
+            // Trigger GitHub sync if enabled
+            const settings = JSON.parse(localStorage.getItem('githubSettings') || '{}');
+            if (settings.enabled) {
+                syncPasswordsToGitHub();
+            }
         }
 
         // Load passwords list
@@ -815,6 +848,271 @@
             a.href = url;
             a.download = 'wedding_data.json';
             a.click();
+        }
+
+        // Export for GitHub Pages
+        function exportForGitHub() {
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            if (Object.keys(passwords).length === 0) {
+                alert('No passwords to export for GitHub Pages.');
+                return;
+            }
+
+            // Generate JavaScript code for hardcoded passwords
+            let jsCode = `// Generated passwords for GitHub Pages\n`;
+            jsCode += `// Copy this code and paste it into login.html to replace the hardcodedPasswords object\n\n`;
+            jsCode += `const hardcodedPasswords = {\n`;
+            
+            for (const [password, data] of Object.entries(passwords)) {
+                jsCode += `    '${password}': { guestName: '${data.guestName}', canBringCompanion: ${data.canBringCompanion} },\n`;
+            }
+            
+            jsCode += `};\n\n`;
+            jsCode += `// Total passwords: ${Object.keys(passwords).length}\n`;
+            jsCode += `// Generated on: ${new Date().toLocaleString()}\n`;
+
+            // Create downloadable file
+            const blob = new Blob([jsCode], { type: 'text/javascript' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'github_passwords.js';
+            a.click();
+            
+            // Also show in alert for quick copy-paste
+            alert(`✅ GitHub Pages export complete!\n\n` +
+                  `📁 Downloaded: github_passwords.js\n` +
+                  `🔢 Total passwords: ${Object.keys(passwords).length}\n\n` +
+                  `📝 Next steps:\n` +
+                  `1. Open the downloaded file\n` +
+                  `2. Copy the hardcodedPasswords code\n` +
+                  `3. Paste it into your login.html on GitHub\n` +
+                  `4. All passwords will work on live website!`);
+        }
+
+        // NEW: Real-time GitHub integration
+        function setupGitHubIntegration() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.8); z-index: 2000; display: flex;
+                align-items: center; justify-content: center;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+                    <h3>🚀 Real-Time GitHub Integration</h3>
+                    <p>Set up automatic password sync to your live website!</p>
+                    
+                    <div style="margin: 20px 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">GitHub Personal Access Token:</label>
+                        <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <small style="color: #666;">Create at: Settings → Developer Settings → Personal Access Tokens</small>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Repository (username/repo-name):</label>
+                        <input type="text" id="githubRepo" placeholder="yourusername/wedding-website" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Branch:</label>
+                        <input type="text" id="githubBranch" value="main" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 25px;">
+                        <button onclick="saveGitHubSettings()" style="flex: 1; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            💾 Save & Enable Auto-Sync
+                        </button>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            ❌ Cancel
+                        </button>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 12px;">
+                        <strong>How it works:</strong><br>
+                        • When you create passwords here, they're automatically pushed to GitHub<br>
+                        • GitHub Pages rebuilds your live website with new passwords<br>
+                        • No more manual export/import needed!<br>
+                        • Passwords work on live site within 1-2 minutes
+                    </div>
+                </div>
+            `;
+            
+            modal.className = 'modal-overlay';
+            document.body.appendChild(modal);
+        }
+
+        function saveGitHubSettings() {
+            const token = document.getElementById('githubToken').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+            const branch = document.getElementById('githubBranch').value.trim() || 'main';
+            
+            if (!token || !repo) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            // Save settings to localStorage
+            localStorage.setItem('githubSettings', JSON.stringify({
+                token: token,
+                repo: repo,
+                branch: branch,
+                enabled: true
+            }));
+            
+            document.querySelector('.modal-overlay').remove();
+            
+            // Test the connection
+            testGitHubConnection().then(success => {
+                if (success) {
+                    alert('✅ GitHub integration enabled!\n\nPasswords will now auto-sync to your live website when created.');
+                    updateGitHubStatus();
+                    
+                    // Auto-sync existing passwords
+                    if (confirm('Sync all existing passwords to GitHub now?')) {
+                        syncPasswordsToGitHub();
+                    }
+                } else {
+                    alert('❌ Connection failed. Please check your token and repository settings.');
+                }
+            });
+        }
+
+        async function testGitHubConnection() {
+            const settings = JSON.parse(localStorage.getItem('githubSettings') || '{}');
+            if (!settings.enabled) return false;
+            
+            try {
+                const response = await fetch(`https://api.github.com/repos/${settings.repo}`, {
+                    headers: {
+                        'Authorization': `token ${settings.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('GitHub connection test failed:', error);
+                return false;
+            }
+        }
+
+        async function syncPasswordsToGitHub() {
+            const settings = JSON.parse(localStorage.getItem('githubSettings') || '{}');
+            if (!settings.enabled) {
+                alert('GitHub integration not enabled. Click "🔧 Setup GitHub Auto-Sync" first.');
+                return;
+            }
+            
+            const passwords = JSON.parse(localStorage.getItem('weddingPasswords') || '{}');
+            if (Object.keys(passwords).length === 0) {
+                alert('No passwords to sync.');
+                return;
+            }
+            
+            try {
+                // Show loading
+                const loadingMsg = document.createElement('div');
+                loadingMsg.innerHTML = `
+                    <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                                background: white; padding: 30px; border-radius: 15px; z-index: 3000; 
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;">
+                        <div style="border: 3px solid #f3f3f3; border-top: 3px solid #007bff; border-radius: 50%; 
+                                    width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                        <h3>🚀 Syncing to GitHub...</h3>
+                        <p>Updating your live website with ${Object.keys(passwords).length} passwords</p>
+                    </div>
+                `;
+                document.body.appendChild(loadingMsg);
+                
+                // Get current login.html file
+                const fileResponse = await fetch(`https://api.github.com/repos/${settings.repo}/contents/login.html`, {
+                    headers: {
+                        'Authorization': `token ${settings.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!fileResponse.ok) throw new Error('Failed to fetch login.html');
+                
+                const fileData = await fileResponse.json();
+                const currentContent = atob(fileData.content);
+                
+                // Generate new password data
+                let passwordCode = `            const hardcodedPasswords = {\n`;
+                for (const [password, data] of Object.entries(passwords)) {
+                    passwordCode += `                '${password}': { guestName: '${data.guestName}', canBringCompanion: ${data.canBringCompanion} },\n`;
+                }
+                passwordCode += `            };`;
+                
+                // Replace the hardcoded passwords section
+                const updatedContent = currentContent.replace(
+                    /const hardcodedPasswords = \{[^}]*\};/s,
+                    passwordCode
+                );
+                
+                // Commit the updated file
+                const updateResponse = await fetch(`https://api.github.com/repos/${settings.repo}/contents/login.html`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${settings.token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `🔑 Auto-sync: Updated ${Object.keys(passwords).length} wedding passwords`,
+                        content: btoa(updatedContent),
+                        sha: fileData.sha,
+                        branch: settings.branch
+                    })
+                });
+                
+                loadingMsg.remove();
+                
+                if (updateResponse.ok) {
+                    alert(`✅ SUCCESS! Auto-sync complete!\n\n` +
+                          `🔢 Synced ${Object.keys(passwords).length} passwords to GitHub\n` +
+                          `🌐 Your live website will update within 1-2 minutes\n` +
+                          `🎉 All passwords now work on your live website!`);
+                } else {
+                    throw new Error('Failed to update file');
+                }
+                
+            } catch (error) {
+                console.error('GitHub sync failed:', error);
+                document.querySelector('[style*="spin"]')?.closest('div').remove();
+                alert(`❌ Sync failed: ${error.message}\n\nPlease check your GitHub settings and try again.`);
+            }
+        }
+
+        function updateGitHubStatus() {
+            const settings = JSON.parse(localStorage.getItem('githubSettings') || '{}');
+            const statusEl = document.getElementById('githubStatus');
+            
+            if (settings.enabled) {
+                statusEl.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; margin-bottom: 15px;">
+                        <span style="color: #155724; font-weight: bold;">✅ GitHub Auto-Sync: ENABLED</span>
+                        <span style="color: #666; font-size: 12px;">(${settings.repo})</span>
+                        <button onclick="disableGitHubSync()" style="margin-left: auto; padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 5px; font-size: 12px;">Disable</button>
+                    </div>
+                `;
+            } else {
+                statusEl.innerHTML = `
+                    <div style="padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; margin-bottom: 15px;">
+                        <span style="color: #856404;">⚠️ Manual export required for live website</span>
+                        <button onclick="setupGitHubIntegration()" style="margin-left: 10px; padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 12px;">🔧 Setup Auto-Sync</button>
+                    </div>
+                `;
+            }
+        }
+
+        function disableGitHubSync() {
+            if (confirm('Disable GitHub auto-sync? You\'ll need to manually export passwords again.')) {
+                localStorage.removeItem('githubSettings');
+                updateGitHubStatus();
+                alert('GitHub auto-sync disabled. Passwords will only work locally until manually exported.');
+            }
         }
 
         // Clear all data
