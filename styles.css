@@ -37,11 +37,8 @@ body {
     transition: opacity 3s ease-in-out;
 }
 
-/* Ensure first slide is visible by default */
-.slide:first-child {
-    opacity: 1;
-}
-
+/* First slide should be visible by default */
+.slide:first-child,
 .slide.active {
     opacity: 1;
 }
