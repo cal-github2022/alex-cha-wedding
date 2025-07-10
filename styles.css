@@ -21,7 +21,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1; /* Higher than body background */
+    z-index: 0; /* Above body background but below content */
 }
 
 .slide {
@@ -40,7 +40,7 @@ body {
 /* First slide should be visible by default */
 .slide:first-child,
 .slide.active {
-    opacity: 1;
+    opacity: 1 !important; /* Force visibility */
 }
 
 /* Beautiful gradient backgrounds that always work */
@@ -48,16 +48,19 @@ body {
 .slide:nth-child(1) {
     background: linear-gradient(135deg, #f7f3ef 0%, #e8ddd4 25%, #d4c4b0 50%, #c9b79c 75%, #b8a082 100%);
     /* Elegant champagne/gold wedding theme */
+    border: 3px solid red; /* Temporary debug border */
 }
 
 .slide:nth-child(2) {
     background: linear-gradient(135deg, #fdf2f8 0%, #f7e6f0 25%, #f3d5e7 50%, #e8b4cb 75%, #dda0c2 100%);
     /* Soft blush pink wedding theme */
+    border: 3px solid green; /* Temporary debug border */
 }
 
 .slide:nth-child(3) {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 25%, #e2e8f0 50%, #cbd5e1 75%, #94a3b8 100%);
     /* Elegant dusty blue wedding theme */
+    border: 3px solid blue; /* Temporary debug border */
 }
 
 .overlay {
@@ -75,7 +78,7 @@ body {
     margin: 0 auto;
     padding: 2rem;
     position: relative;
-    z-index: 1;
+    z-index: 1; /* Above background slideshow */
 }
 
 /* Header Styles */
